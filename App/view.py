@@ -228,11 +228,11 @@ while True:
        print(elapsed_time_mseg)
 
     elif int(inputs[0]) == 6:
-        nObras= int(input("Ingrese el número de obras a buscar"))
-        medio= input("Ingrese el medio de las obras")
+        nObras= int(input("Ingrese el número de obras a buscar: "))
+        medio= input("Ingrese el medio de las obras: ")
 
         resultado= controller.nObras(catalog, nObras, medio)
-        print( "las obras "+ str(nObras)+ "más antiguas son: "+ str(resultado))
+        print( "las obras "+ str(nObras)+ " más antiguas son: "+ str(resultado))
        
     else:
         sys.exit(0)
