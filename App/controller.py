@@ -100,3 +100,6 @@ def oldest(listaobras):
 def expensive(listaobras):
     return model.expensive(listaobras)
 
+#Lab
+def nObras(catalog, nObras, medio):
+    return model.antiguas( catalog, nObras, medio)

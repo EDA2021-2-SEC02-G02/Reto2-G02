@@ -43,6 +43,7 @@ def printMenu():
     print("3- Clasificar obras de un artista por técnica")
     print("4- Clasificar las obras por nacionalidad de sus creadores")
     print("5- Transportar obras de un departamento")
+    print("6- mostrar n obras más antiguas")
 
 
 def inicializar_catalogo():
@@ -177,7 +178,6 @@ while True:
         
         print("\nEL TOP 10 SON:"+ str(diez[0][0])+"incluye: "+str(diez[0][1])+"obras")
         print("\nPRIMEROS Y UTLIMOS TRES:"+str(diez[0][0]))
-        informacionObra(mejor)
         stop_time= time.process_time()
         elapsed_time_mseg=(stop_time - start_time)*1000
         print(elapsed_time_mseg)
@@ -226,12 +226,18 @@ while True:
        stop_time= time.process_time()
        elapsed_time_mseg=(stop_time - start_time)*1000
        print(elapsed_time_mseg)
-       
 
-    
+    elif int(inputs[0]) == 6:
+        nObras= int(input("Ingrese el número de obras a buscar"))
+        medio= input("Ingrese el medio de las obras")
+
+        resultado= controller.nObras(catalog, nObras, medio)
+        print( "las obras "+ str(nObras)+ "más antiguas son: "+ str(resultado))
+       
     else:
         sys.exit(0)
 sys.exit(0)
+
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")

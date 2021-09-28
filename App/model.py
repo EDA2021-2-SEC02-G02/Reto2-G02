@@ -47,7 +47,7 @@ def newCatalog():
 
     catalog['Obra']=lt.newList('SINGLE_LINKED', compareobjectID)
 
-    catalog ['Medio']=mp.newMap(147100,
+    catalog ['Medio']=mp.newMap(20,
                                 maptype="CHAINING",
                                 loadfactor=0.75,
                                 comparefunction=comparemedium)
@@ -58,7 +58,7 @@ def newCatalog():
 def compareconstituentID(artist1ID, artist2ID):
   if (artist1ID == artist2ID):
         return 0
-  elif artist1ID > artist2ID:
+  elif len(artist1ID) > len(artist2ID):
         return 1
   else:
         return -1
@@ -82,13 +82,50 @@ def comparemedium (keymedium, medium):
 
 
 
+def addMedio(catalog, obra):
+  try:
+        medios = catalog['Medio']
+        if (obra['Medium'] != ''):
+            medio = obra['Medium']
+            
+        else:
+            medio = "desconocido"
+        existmedio = mp.contains(medios, medio)
+        if existmedio:
+            entry = mp.get(medios, medio)
+            listaMedio = me.getValue(entry)
+        else:
+            listaMedio = newMedio(medio)
+            mp.put(medios, medio, listaMedio)
+        lt.addLast(listaMedio['Obras'], obra)
+  except Exception:
+        return None
 
+def newMedio(medio):
+    """
+    Esta funcion crea la estructura de libros asociados
+    a un año.
+    """
+    entry = {'Medio': "", "Obras": None}
+    entry['Medio'] = medio
+    entry['Obras'] = lt.newList('ARRAY_LIST', compararObras)
+    return entry
+
+def compararObras(obra1, obra2):
+    if (int(obra1) == int(obra2)):
+        return 0
+    elif (int(obra1) > int(obra2)):
+        return 1
+    else:
+        return 0
 
 
 def antiguas (catalog, nobras, medio):
-  catamedios=catalog["medio"]
-  conjmedios=catamedios[medio]
-  organizar=compareyear(conjmedios)
+  catamedios=catalog["Medio"]
+  print(catamedios)
+  conjmedios=mp.get(catamedios,medio)
+  conjmedios=me.getValue(conjmedios)["Obras"]
+  organizar=sortyear(conjmedios)
   return organizar
 
 def compareyear(date1, date2):
@@ -131,6 +168,7 @@ def addobra(catalog, obras):
           "Artists":lt.newList("ARRAY_LIST")}
         lt.addLast(catalog["Obra"],obra)  
         IDartista= obra["ConstituentID"].split(",")
+        addMedio(catalog,obra)
         for artista in IDartista:
             addArtworkartist(catalog, artista, obra)
 
