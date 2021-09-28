@@ -49,7 +49,7 @@ def newCatalog():
 
     catalog ['Medio']=mp.newMap(147100,
                                 maptype="CHAINING",
-                                loadfactor=1.5,
+                                loadfactor=0.75,
                                 comparefunction=comparemedium)
 
     return catalog
@@ -71,14 +71,19 @@ def compareobjectID (artwork1ID, artwork2ID):
   else:
         return -1
 
-def comparemedium (id, tag):
-  tagentry= me.getKey(tag)
-  if (id == tagentry):
+def comparemedium (keymedium, medium):
+  mediumentry= me.getKey(medium)
+  if (keymedium == mediumentry):
     return 0
-  elif (id > tagentry):
+  elif (keymedium > mediumentry):
     return 1
   else:
-    return 0
+    return -1
+
+
+
+
+
 
 def antiguas (catalog, nobras, medio):
   catamedios=catalog["medio"]
