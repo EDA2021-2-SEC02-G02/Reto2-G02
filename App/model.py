@@ -25,6 +25,7 @@
  """
 
 
+from App.controller import nObras
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
@@ -32,6 +33,7 @@ from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Algorithms.Sorting import mergesort as mg
 assert cf
+import datetime as dt
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
@@ -122,11 +124,12 @@ def compararObras(obra1, obra2):
 
 def antiguas (catalog, nobras, medio):
   catamedios=catalog["Medio"]
-  print(catamedios)
+  
   conjmedios=mp.get(catamedios,medio)
   conjmedios=me.getValue(conjmedios)["Obras"]
-  organizar=sortyear(conjmedios)
-  return organizar
+  organizar=sortdate(conjmedios)
+  rpta= lt.subList(organizar,1,nobras)
+  return rpta
 
 def compareyear(date1, date2):
    if date1["BeginDate"]!= "" and date2["BeginDate"]!= "":
