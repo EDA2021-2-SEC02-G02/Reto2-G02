@@ -25,7 +25,7 @@
  """
 
 
-from App.controller import nObras
+from controller import nArtworks
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
@@ -41,31 +41,42 @@ los mismos..
 """
 # Construccion de modelos
 def newCatalog():
-    catalog = {"Artista":None,
-                 "Obra":None,
-                 "Medio":None }
+    catalog = {"Artist":None,
+                 "Artwork":None,
+                 "Medium":None }
 
-    catalog['Artista']= lt.newList('SINGLE_LINKED', compareconstituentID)
+    catalog['Artist']= lt.newList('SINGLE_LINKED', cmpfunction=compareconstituentID)
 
-    catalog['Obra']=lt.newList('SINGLE_LINKED', compareobjectID)
+    catalog['Artwork']=lt.newList('SINGLE_LINKED', cmpfunction=compareobjectID)
 
-    catalog ['Medio']=mp.newMap(20,
+    catalog ['Medium']=mp.newMap(20,
                                 maptype="CHAINING",
-                                loadfactor=0.75,
+                                loadfactor=4,
                                 comparefunction=comparemedium)
-
+    catalog ["Nationality"]=mp.newMap(119,
+                                    maptype="CHAINING",
+                                    loadfactor=1.07,
+                                    comparefunction=comparenation)
+   # catalog["yearartist"]=mp.newMap(10,
+   #                                maptype="PROBING",
+   #                                loadfactor=0.5,
+   #                                comparefunction=compareyearartist)                                
     return catalog
 
 
 def compareconstituentID(artist1ID, artist2ID):
+ # artist1ID=int(artist1ID["ConstituentID"])
+  artist2ID=int(artist2ID["ConstituentID"])
   if (artist1ID == artist2ID):
         return 0
-  elif len(artist1ID) > len(artist2ID):
+  elif artist1ID > artist2ID:
         return 1
   else:
         return -1
 
 def compareobjectID (artwork1ID, artwork2ID):
+  artwork1ID=int(artwork1ID["ObjectID"])
+  artwork1ID=int(artwork1ID["ObjectID"])
   if (artwork1ID == artwork2ID):
        return 0
   elif artwork1ID > artwork2ID:
@@ -82,54 +93,136 @@ def comparemedium (keymedium, medium):
   else:
     return -1
 
+def comparenation (keynation, nationality):
+  nationalityentry= me.getKey(nationality)
+  if (keynation== nationalityentry):
+    return 0
+  elif (keynation>nationalityentry):
+    return 1
+  else:
+    return -1
 
 
-def addMedio(catalog, obra):
+def addMedium(catalog, artwork):
   try:
-        medios = catalog['Medio']
-        if (obra['Medium'] != ''):
-            medio = obra['Medium']
+        mediums = catalog['Medium']
+        if (artwork['Medium'] != ''):
+            medium = artwork['Medium']
             
         else:
-            medio = "desconocido"
-        existmedio = mp.contains(medios, medio)
-        if existmedio:
-            entry = mp.get(medios, medio)
-            listaMedio = me.getValue(entry)
+            medium = "unknown"
+        existmedium = mp.contains(mediums, medium)
+        if existmedium:
+            entry = mp.get(mediums, medium)
+            listMedium = me.getValue(entry)
         else:
-            listaMedio = newMedio(medio)
-            mp.put(medios, medio, listaMedio)
-        lt.addLast(listaMedio['Obras'], obra)
-  except Exception:
-        return None
+            listMedium = newMedium(medium)
+            mp.put(mediums, medium, listMedium)
+        lt.addLast(listMedium['Artworks'], artwork)
+  except Exception as e:
+        raise e
 
-def newMedio(medio):
+def newMedium(medium):
     """
     Esta funcion crea la estructura de libros asociados
     a un año.
     """
-    entry = {'Medio': "", "Obras": None}
-    entry['Medio'] = medio
-    entry['Obras'] = lt.newList('ARRAY_LIST', compararObras)
+    entry = {'Medium': "", "Artworks": None}
+    entry['Medium'] = medium
+    entry['Artworks'] = lt.newList('ARRAY_LIST', comparingArtworks)
     return entry
 
-def compararObras(obra1, obra2):
-    if (int(obra1) == int(obra2)):
+def comparingArtworks(artwork1, artwork2):
+    if (int(artwork1) == int(artwork2)):
         return 0
-    elif (int(obra1) > int(obra2)):
+    elif (int(artwork1) > int(artwork2)):
         return 1
     else:
         return 0
 
 
-def antiguas (catalog, nobras, medio):
-  catamedios=catalog["Medio"]
+def ancient (catalog, nartworks, medium):
+  catamediums=catalog["Medium"]
   
-  conjmedios=mp.get(catamedios,medio)
-  conjmedios=me.getValue(conjmedios)["Obras"]
-  organizar=sortdate(conjmedios)
-  rpta= lt.subList(organizar,1,nobras)
-  return rpta
+  conjmediums=mp.get(catamediums,medium)
+  conjmediums=me.getValue(conjmediums)["Artworks"]
+  organize=sortdate(conjmediums)
+  answer= lt.subList(organize,1,nartworks)
+  return answer
+
+def addNationality(catalog, artist):
+  try:
+        nationalities = catalog['Nationality']
+        if (artist['Nationality'] != ''):
+            nationality = artist['Nationality']
+            
+        else:
+            nationality = "unknown"
+        existnationality = mp.contains(nationalities, nationality)
+        if existnationality:
+            entry = mp.get(nationalities, nationality)
+            listNation = me.getValue(entry)
+        else:
+            listNation = newNationality(nationality)
+            mp.put(nationalities, nationality, listNation)
+        lt.addLast(listNation['Artworks'], artist["Artwork"])
+  except Exception as e:
+        raise e
+
+def addNationality2 (tablenationality, nationality, artworklist):
+  try:
+    #si la nacionalidad no esta en el indice
+    #print (mp.keySet(tablenationality))
+    if mp.contains(tablenationality, nationality)== False:
+      #agregar una nueva nacionalidad al indice
+      mp.put(tablenationality, nationality, artworklist)
+      #print(lt.size(artworklist))
+
+    #si la nacionalidad ya esta en el indice
+    elif mp.contains(tablenationality, nationality)== True:
+      #Saco los datos de la nacionalidad
+      temp=mp.get(tablenationality, nationality)
+      temp=me.getValue(temp)
+      #Agrego las nuevas obras a las ya existentes
+      for artwork in lt.iterator(temp):
+        lt.addLast(artworklist,artwork)
+        #print(artwork)
+      #Actualizar indice de nacionalidades
+      mp.put(tablenationality,nationality,artworklist)
+      print(lt.size(artworklist))
+
+  except Exception as e:
+        raise e
+
+
+def newNationality(nationality):
+    """
+    Esta funcion crea la estructura de libros asociados
+    a un año.
+    """
+    entry = {'Nationality': "", "Artworks": None}
+    entry['Nationality'] = nationality
+    entry['Artworks'] = lt.newList('ARRAY_LIST', comparingArtists)
+    return entry
+
+def comparingArtists(artist1, artist2):
+    if (int(artist1) == int(artist2)):
+        return 0
+    elif (int(artist1) > int(artist2)):
+        return 1
+    else:
+        return 0
+
+
+def artwinnation (catalog, country):
+  catanation=catalog["Nationality"]
+  #print(mp.size(catanation))
+  conjnation=mp.get(catanation,country)
+  #print(type(conjnation))
+  conjnation=me.getValue(conjnation)
+  #print(type(conjnation))
+  return conjnation
+
 
 def compareyear(date1, date2):
    if date1["BeginDate"]!= "" and date2["BeginDate"]!= "":
@@ -139,53 +232,57 @@ def compareyear(date1, date2):
 
 
 # Funciones para agregar informacion al catalogo
-def addartista(catalog, artistas):
-        artista={"ConstituentID": artistas["ConstituentID"],
-             "DisplayName": artistas["DisplayName"],
-             "Nationality": artistas["Nationality"],
-             "BeginDate":artistas["BeginDate"],
-             "EndDate": artistas["EndDate"],
-             "Gender": artistas["Gender"],
-             "Artworks":lt.newList("ARRAY_LIST")}
-        lt.addLast(catalog["Artista"],artista)
+def addartist(catalog, artists):
+        artist={
+             "ConstituentID": artists["ConstituentID"],
+             "DisplayName": artists["DisplayName"],
+             "Nationality": artists["Nationality"],
+             "BeginDate":artists["BeginDate"],
+             "EndDate": artists["EndDate"],
+             "Gender": artists["Gender"],
+             "Artworks":lt.newList("ARRAY_LIST",cmpfunction=compareobjectID)
+             }
+        lt.addLast(catalog["Artist"],artist)
   
 
-def addobra(catalog, obras):
-        obra={"ObjectID":obras["ObjectID"],
-          "Title": obras ["Title"],
-          "ConstituentID": obras ["ConstituentID"][1:-1],
-          "Date": obras["Date"],
-          "Medium": obras["Medium"],
-          "Dimensions": obras["Dimensions"],
-          "CreditLine": obras["CreditLine"],
-          "Classification": obras["Classification"],
-          "Department": obras["Department"],
-          "DateAcquired": obras["DateAcquired"],
-          "Circumference": obras["Circumference (cm)"],
-          "Depth": obras["Depth (cm)"],
-          "Diameter": obras["Diameter (cm)"],
-          "Height": obras["Height (cm)"],
-          "Length": obras["Length (cm)"],
-          "Weight":obras["Weight (kg)"],
-          "Width": obras["Width (cm)"],
-          "Artists":lt.newList("ARRAY_LIST")}
-        lt.addLast(catalog["Obra"],obra)  
-        IDartista= obra["ConstituentID"].split(",")
-        addMedio(catalog,obra)
-        for artista in IDartista:
-            addArtworkartist(catalog, artista, obra)
+def addartwork(catalog, artworks):
+        artwork={
+          "ObjectID":artworks["ObjectID"],
+          "Title": artworks["Title"],
+          "ConstituentID": artworks["ConstituentID"],
+          "Date": artworks["Date"],
+          "Medium": artworks["Medium"],
+          "Dimensions": artworks["Dimensions"],
+          "CreditLine": artworks["CreditLine"],
+          "Classification": artworks["Classification"],
+          "Department": artworks["Department"],
+          "DateAcquired": artworks["DateAcquired"],
+          "Circumference": artworks["Circumference (cm)"],
+          "Depth": artworks["Depth (cm)"],
+          "Diameter": artworks["Diameter (cm)"],
+          "Height": artworks["Height (cm)"],
+          "Length": artworks["Length (cm)"],
+          "Weight":artworks["Weight (kg)"],
+          "Width": artworks["Width (cm)"],
+          "Artists":lt.newList("ARRAY_LIST", cmpfunction=compareconstituentID)
+          }
+        lt.addLast(catalog["Artwork"],artwork)  
+        IDartist= eval(artwork["ConstituentID"])
+        addMedium(catalog,artwork)
+        for artist in IDartist:
+            addArtworkartist(catalog, artist, artwork)
 
       
-def addArtworkartist(catalog, IDartista, obra):
-    artistas=catalog["Artista"]
-    posicion=lt.isPresent(artistas, IDartista)
-    if posicion>0:
-      artista= lt.getElement(artistas, posicion)
-      lt.addLast(artista["Artworks"], obra)
-      lt.addLast(obra["Artists"], artista)
+def addArtworkartist(catalog, IDartist, artwork):
+    artists=catalog["Artist"]
+    position=lt.isPresent(artists, IDartist)
+    if position>0:
+      artist= lt.getElement(artists, position)
+      lt.addLast(artist["Artworks"], artwork)
+      lt.addLast(artwork["Artists"], artist)
 
-def compareartworks(ID,artistas):
-    if (ID in artistas["ConstituentID"]):
+def compareartworks(ID,artists):
+    if (ID in artists["ConstituentID"]):
       return 0
     return -1
 
@@ -193,13 +290,13 @@ def compareartworks(ID,artistas):
 # Funciones para creacion de datos  
 # REQ. 1: listar cronológicamente los artistas  
  
-def addartistyear(catalog, año1, año2):
+def addartistyear(catalog, year1, year2):
     artistsinrange=lt.newList("ARRAY_LIST")
     i=1
-    while i<= lt.size(catalog["Artista"]):
-        artista=lt.getElement(catalog["Artista"],i)
-        if int(artista["BeginDate"])>= año1 and int(artista["BeginDate"])<=año2:
-            lt.addLast(artistsinrange, artista)
+    while i<= lt.size(catalog["Artist"]):
+        artist=lt.getElement(catalog["Artist"],i)
+        if int(artist["BeginDate"])>= year1 and int(artist["BeginDate"])<=year2:
+            lt.addLast(artistsinrange, artist)
         i+=1
     sortedlist=sortyear(artistsinrange)
     return sortedlist
@@ -218,28 +315,28 @@ def cmpArtworkByBeginDate (date1, date2):
 
 
 #REQ. 2: listar cronológicamente las adquisiciones 
-def addartworkyear(catalog, fecha1,fecha2):
-    fecha1=dt.date.fromisoformat(fecha1)
-    fecha2=dt.date.fromisoformat(fecha2)
+def addartworkyear(catalog, date1,date2):
+    date1=dt.date.fromisoformat(date1)
+    date2=dt.date.fromisoformat(date2)
     artworksinrange=lt.newList("ARRAY_LIST")
     i=1
-    while i<= lt.size(catalog["Obra"]):
-        obra=lt.getElement(catalog["Obra"],i)
-        if obra["DateAcquired"]!="":
-           enfecha=dt.date.fromisoformat(obra["DateAcquired"])
-           if enfecha>= fecha1 and enfecha<= fecha2:
-               lt.addLast(artworksinrange, obra)
+    while i<= lt.size(catalog["Artwork"]):
+        artwork=lt.getElement(catalog["Artwork"],i)
+        if artwork["DateAcquired"]!="":
+           indate=dt.date.fromisoformat(artwork["DateAcquired"])
+           if indate>= date1 and indate<= date2:
+               lt.addLast(artworksinrange, artwork)
         i+=1
     sortlist=sortdate(artworksinrange)
     return sortlist
 
   #encontrar número de obras compradas
-def purchaseart (listaordenada2):
+def purchaseart (sortedlist2):
     i=1
     n=0
-    while i<=lt.size(listaordenada2):
-        obra=lt.getElement(listaordenada2,i)
-        if obra["CreditLine"]=="Purchase":
+    while i<=lt.size(sortedlist2):
+        artwork=lt.getElement(sortedlist2,i)
+        if artwork["CreditLine"]=="Purchase":
             n+=1
         i+=1
     return n
@@ -250,132 +347,132 @@ def sortdate (artworksinrange):
     return sorted_list
 
   # Funciones utilizadas para comparar elementos dentro de una lista
-def cmpArtworkByDateAcquired (obra1, obra2):
-    if obra1["DateAcquired"]!= "" and obra2["DateAcquired"]!= "":
-        fecha1= dt.date.fromisoformat(obra1["DateAcquired"])
-        fecha2= dt.date.fromisoformat(obra2["DateAcquired"])
-        return fecha1<fecha2
+def cmpArtworkByDateAcquired (artwork1, artwork2):
+    if artwork1["DateAcquired"]!= "" and artwork2["DateAcquired"]!= "":
+        date1= dt.date.fromisoformat(artwork1["DateAcquired"])
+        date2= dt.date.fromisoformat(artwork2["DateAcquired"])
+        return date1<date2
 
 
 #REQ. 3: clasificar las obras de un artista por técnica (Individual)
 # Total de obras
-def totalobrasartista (catalog, name):
-    obras=lt.newList("ARRAY_LIST")
-    for artista in lt.iterator(catalog["Artista"]):
-        if artista["DisplayName"]== name:
-            obras=artista["Artworks"]
-    return obras
+def totalartworksartist (catalog, name):
+    artworks=lt.newList("ARRAY_LIST")
+    for artist in lt.iterator(catalog["Artist"]):
+        if artist["DisplayName"]== name:
+            artworks=artist["Artworks"]
+    return artworks
 
 #Total técnicas (medios) utilizados
-def totalmedios(obras):
-    tecnicas=lt.newList("ARRAY_LIST", cmpfunction=cmpmediums)
+def totalmediums(artworks):
+    techniques=lt.newList("ARRAY_LIST", cmpfunction=cmpmediums)
     j=1
-    while j <=lt.size(obras):
-      obra=lt.getElement(obras,j)
-      tecnica=obra["Medium"]
-      posicion=lt.isPresent(tecnicas,tecnica)
-      if posicion>0:
-          tec=lt.getElement(tecnicas, posicion)
-          tec["valor"]+=1
+    while j <=lt.size(artworks):
+      artwork=lt.getElement(artworks,j)
+      technique=artwork["Medium"]
+      position=lt.isPresent(techniques,technique)
+      if position>0:
+          tec=lt.getElement(techniques, position)
+          tec["value"]+=1
       else:
-          tec={"Nombre":tecnica,"valor":1}
-          lt.addLast(tecnicas, tec)
+          tec={"Name":technique,"value":1}
+          lt.addLast(techniques, tec)
       j+=1
-    sortedlist=sorttecnicas(tecnicas)
+    sortedlist=sorttecnicas(techniques)
     return sortedlist
 
-def sorttecnicas(tecnicas):
-   sortedlist=mg.sort(tecnicas, cmptecnicas)
+def sorttecnicas(techniques):
+   sortedlist=mg.sort(techniques, cmptechniques)
    return sortedlist
 
-def cmptecnicas( tecnica1, tecnica2):
-    if tecnica1["valor"]>=tecnica2["valor"]:
+def cmptechniques( technique1, technique2):
+    if technique1["value"]>=technique2["value"]:
        return True
     else:
        return False
   
-def cmpmediums (tecnica1,tecnica2):
-  if tecnica1== tecnica2["Nombre"]:
+def cmpmediums (technique1,technique2):
+  if technique1== technique2["Name"]:
     return 0
   else:
     return 1
 
 #La técnica mas utilizada  
-def primeratecnica (sortedlist):
-   nombre=lt.firstElement(sortedlist)
-   nombre=nombre["Nombre"]
-   return nombre
+def firsttechnique (sortedlist):
+   name=lt.firstElement(sortedlist)
+   name=name["Name"]
+   return name
 
 #El listado de las obras de dicha técnica
-def obrastecnica1(nombre,obras):
-  listaobras=lt.newList("ARRAY_LIST")
-  for obra in lt.iterator(obras):
-    if obra["Medium"]==nombre:
-      lt.addLast(listaobras,obra)
-  return listaobras
+def artworkstechnique1(name,artworks):
+  listartworks=lt.newList("ARRAY_LIST")
+  for artwork in lt.iterator(artworks):
+    if artwork["Medium"]==name:
+      lt.addLast(listartworks,artwork)
+  return listartworks
 
 #REQ. 4:clasificar las obras por la nacionalidad de sus creadores
 
-def tomar (n, iterable):
+def take (n, iterable):
   return list(islice(iterable,n))
 
-def obrasRecurrentes (catalog , top):
-  id = catalog["Artista"]
-  lista= lt.newList(datastructure= "ARRAY_LIST")
+def recurrentartworks (catalog , top):
+  id = catalog["Artist"]
+  list= lt.newList(datastructure= "ARRAY_LIST")
 
   for artist in id.values():
-    nacionalidad = artist["Nacionalidad"]
-    if nacionalidad == top:
-      for artwork in lt.iterator(artist["artworks"]):
-        lt.addLast(lista, artwork)
-  return lista
+    nationality = artist["Nationality"]
+    if nationality == top:
+      for artwork in lt.iterator(artist["Artworks"]):
+        lt.addLast(list, artwork)
+  return list
 
-def diezNacionalidades (catalog):
-  diccionario = {}
-  identificacion = catalog["Artista"]
+def tenNationalities (catalog):
+  dictionary = {}
+  identification = catalog["Artist"]
 
-  for artist in identificacion.values():
-    tamaño= lt.size(artist["artworks"])
-    nacionalidad= artist["nacionalidad"]
+  for artist in identification.values():
+    size= lt.size(artist["Artworks"])
+    nationality= artist["Nationality"]
 
-    if nacionalidad != "" or nacionalidad != "Nationality unknown":
-      if nacionalidad not in diccionario.keys():
-        diccionario[nacionalidad]= tamaño
+    if nationality != "" or nationality != "Nationality unknown":
+      if nationality not in dictionary.keys():
+        dictionary["Nationality"]= size
       else:
-        diccionario[nacionalidad]+= tamaño
+        dictionary["Nationality"]+= size
 
-  organizado= dict(sorted(diccionario.items(),key=lambda item:item[1], reverse= True))
+  organized= dict(sorted(dictionary.items(),key=lambda item:item[1], reverse= True))
 
-  nacionalidades= tomar(100, organizado.items())
-  primera= nacionalidades[0][0]
-  lista= obrasRecurrentes(catalog, primera)
+  nationalities= take(100, organized.items())
+  first= nationalities[0][0]
+  list= recurrentartworks(catalog, first)
     
-  return nacionalidades, lista
+  return nationalities, list
 
-def obrastecnica (nombre,obras):
-  listaobras=lt.newList("ARRAY_LIST")
-  for obra in lt.iterator(obras):
-    if obra["Medium"]==nombre:
-      lt.addLast(listaobras,obra)
-  return listaobras
+def artworkstechnique (name,artworks):
+  listartworks=lt.newList("ARRAY_LIST")
+  for artwork in lt.iterator(artworks):
+    if artwork["Medium"]==name:
+      lt.addLast(listartworks,artwork)
+  return listartworks
   
 
 
 #REQ. 5: transportar obras de un departamento
 #Total de obras para transportar (size de esto)
-def totalobras(catalog, depto):
-   listaobras= lt.newList("ARRAY_LIST")
-   obras=catalog["Obra"]
-   for obra in lt.iterator(obras):
-     if obra["Department"]==depto:
-       lt.addLast(listaobras,obra)
-   return listaobras
+def totalartworks(catalog, depto):
+   listartworks= lt.newList("ARRAY_LIST")
+   artworks=catalog["Artwork"]
+   for artwork in lt.iterator(artworks):
+     if artwork["Department"]==depto:
+       lt.addLast(listartworks,artwork)
+   return listartworks
 
 #Estimado en USD del precio del servicio
-def price (listaobras):
+def price (listartworks):
     totalprice=0
-    costo=72
-    for obra in lt.iterator(listaobras):
+    cost=72
+    for artwork in lt.iterator(listartworks):
        kgprice=0
        m2price1=0
        m2price2=0
@@ -394,103 +491,93 @@ def price (listaobras):
        m3price6=0
        m3price7=0
        m3price8=0
-       weight=obra["Weight"]
-       diameter=obra["Diameter"]
-       circumference=obra["Circumference"]
-       length=obra["Length"]
-       height=obra["Height"]
-       width=obra["Width"]
-       depth=obra["Depth"]
+       weight=artwork["Weight"]
+       diameter=artwork["Diameter"]
+       circumference=artwork["Circumference"]
+       length=artwork["Length"]
+       height=artwork["Height"]
+       width=artwork["Width"]
+       depth=artwork["Depth"]
        if weight !="" :
-         kgprice=float(weight)*costo
+         kgprice=float(weight)*cost
        if height!= "" and width!= "":
-         m2price1=(float(height)/100)*(float(width)/100)*costo
+         m2price1=(float(height)/100)*(float(width)/100)*cost
        if height!= "" and length!= "":
-         m2price2=(float(height)/100)*(float(length)/100)*costo
+         m2price2=(float(height)/100)*(float(length)/100)*cost
        if height!= "" and depth!= "":
-         m2price3=(float(height)/100)*(float(depth)/100)*costo
+         m2price3=(float(height)/100)*(float(depth)/100)*cost
        if length!= "" and width != "":
-         m2price4= (float(length)/100)*(float(width)/100)*costo
+         m2price4= (float(length)/100)*(float(width)/100)*cost
        if depth!="" and width!="":
-         m2price5= (float(depth)/100)*(float(width)/100)*costo
+         m2price5= (float(depth)/100)*(float(width)/100)*cost
        if length!="" and depth!="":
-         m2price6= (float(length)/100)*(float(depth)/100)*costo
+         m2price6= (float(length)/100)*(float(depth)/100)*cost
        if diameter !="":
-         m2price8=3.1416*(((float(diameter)/2)/100)**2)*costo
+         m2price8=3.1416*(((float(diameter)/2)/100)**2)*cost
        if circumference!="":
-         m2price9= 3.1416*(((float(circumference)/100)/(2*3.1416))**2)*costo
+         m2price9= 3.1416*(((float(circumference)/100)/(2*3.1416))**2)*cost
 
        if length!="" and width != "" and depth != "":
-         m3price1=(float(length)/100)*(float(width)/100)*(float(depth)/100)*costo
+         m3price1=(float(length)/100)*(float(width)/100)*(float(depth)/100)*cost
        if height!="" and width!= "" and depth!= "":
-         m3price2=(float(height)/100)*(float(width)/100)*(float(depth)/100)*costo
+         m3price2=(float(height)/100)*(float(width)/100)*(float(depth)/100)*cost
        if height!="" and width!= "" and length!= "":
-         m3price3=(float(height)/100)*(float(width)/100)*(float(length)/100)*costo
+         m3price3=(float(height)/100)*(float(width)/100)*(float(length)/100)*cost
        if length!="" and depth!= "" and height!= "":
-         m3price4=(float(length)/100)*(float(depth)/100)*(float(height)/100)*costo
+         m3price4=(float(length)/100)*(float(depth)/100)*(float(height)/100)*cost
        if height!="" and diameter!= "":
-         m3price5=3.1416*((((float(diameter))/2)/100)**2)*(float(height)/100)*costo
+         m3price5=3.1416*((((float(diameter))/2)/100)**2)*(float(height)/100)*cost
        if width!="" and diameter!="":
-         m3price6=3.1416*((((float(diameter))/2)/100)**2)*(float(width)/100)*costo
+         m3price6=3.1416*((((float(diameter))/2)/100)**2)*(float(width)/100)*cost
        if depth!="" and diameter!="":
-         m3price7=3.1416*((((float(diameter))/2)/100)**2)*(float(depth)/100)*costo
+         m3price7=3.1416*((((float(diameter))/2)/100)**2)*(float(depth)/100)*cost
        if length!="" and diameter!="":
-         m3price8=3.1416*((((float(diameter))/2)/100)**2)*(float(length)/100)*costo
+         m3price8=3.1416*((((float(diameter))/2)/100)**2)*(float(length)/100)*cost
        lastprice= max(kgprice,m2price1,m2price2,m2price3,m2price4,m2price5,m2price6,m2price7,m2price8,m2price9,m3price1,m3price2,m3price3,m3price4,m3price5,m3price6,m3price7,m3price8)
        if lastprice==0:
          lastprice=48
-       obra["Price"]=lastprice
+       artwork["Price"]=lastprice
        totalprice+=lastprice
-    return (totalprice, listaobras)
+    return (totalprice, listartworks)
 
 #Peso estimado de las obras
-def weight (listaobras):
-  peso=0
-  for obra in lt.iterator(listaobras):
-    pes=obra["Weight"]
-    if pes== "":
-      peso+=0
+def weight (listartworks):
+  weight=0
+  for artwork in lt.iterator(listartworks):
+    artweight=artwork["Weight"]
+    if artweight== "":
+      weight+=0
     else:
-      pesinfloat=float(pes)
-      peso+=pesinfloat
-  return peso
+      artweightinfloat=float(artweight)
+      weight+=artweightinfloat
+  return weight
 
 #Obras viejas
-def oldest (listaobras):
-  sortedlist=sortviejas(listaobras)
+def oldest (listartworks):
+  sortedlist=sortoldest(listartworks)
   return sortedlist
 
-def sortviejas (listaobras):
-  sorted_list=mg.sort(listaobras, cmpmasvieja)
+def sortoldest (listartworks):
+  sorted_list=mg.sort(listartworks, cmpoldest)
   return sorted_list
 
-def cmpmasvieja(fecha1, fecha2):
-  if fecha1["Date"]!="" and fecha2["Date"]!="":
-    date1=int(fecha1["Date"])
-    date2=int(fecha2["Date"])
+def cmpoldest(date1, date2):
+  if date1["Date"]!="" and date2["Date"]!="":
+    date1=int(date1["Date"])
+    date2=int(date2["Date"])
     return date1>date2
 
 #mas costosas
-def expensive(listaobras):
-  sortlist=sortcaras(listaobras)
+def expensive(listartworks):
+  sortlist=sortexpensive(listartworks)
   return sortlist
 
-def sortcaras(listaobras):
-  sort_list=mg.sort(listaobras, cmpmascara)
+def sortexpensive(listartworks):
+  sort_list=mg.sort(listartworks, cmpexpensive)
   return sort_list
 
-def cmpmascara(precio1,precio2):
-  price1=precio1["Price"]
-  price2=precio2["Price"]
-  return price1>price2
-# Construccion de modelos
+def cmpexpensive(price1,price2):
+  pricevalue1=price1["Price"]
+  pricevalue2=price2["Price"]
+  return pricevalue1>pricevalue2
 
-# Funciones para agregar informacion al catalogo
-
-# Funciones para creacion de datos
-
-# Funciones de consulta
-
-# Funciones utilizadas para comparar elementos dentro de una lista
-
-# Funciones de ordenamiento

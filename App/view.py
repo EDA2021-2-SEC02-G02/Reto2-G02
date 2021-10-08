@@ -21,6 +21,7 @@
  """
 
 
+from model import totalartworks
 import config as cf
 import sys
 import controller
@@ -43,7 +44,8 @@ def printMenu():
     print("3- Clasificar obras de un artista por técnica")
     print("4- Clasificar las obras por nacionalidad de sus creadores")
     print("5- Transportar obras de un departamento")
-    print("6- mostrar n obras más antiguas")
+    print("6- Mostrar n obras más antiguas")
+    print("7- Numero de obras de una nacionalidad")
 
 
 def inicializar_catalogo():
@@ -67,69 +69,69 @@ while True:
         print("Cargando información de los archivos ....")
         catalog=inicializar_catalogo()
         cargarinfo(catalog)
-        print("Artistas cargados "+str(lt.size(catalog["Artista"])))
-        print("Obras cargadas "+str(lt.size(catalog["Obra"])))
+        print("Artistas cargados "+str(lt.size(catalog["Artist"])))
+        print("Obras cargadas "+str(lt.size(catalog["Artwork"])))
         stop_time= time.process_time()
         elapsed_time_mseg=(stop_time - start_time)*1000
         print(elapsed_time_mseg)
 
     elif int(inputs[0]) == 1:
-        año1= int(input("Ingrese el año inicial del que desea organizar los artistas: "))
-        año2= int(input("Ingrese el año final del que desea organizar los artistas: "))
+        year1= int(input("Ingrese el año inicial del que desea organizar los artistas: "))
+        year2= int(input("Ingrese el año final del que desea organizar los artistas: "))
         start_time=time.process_time()
         print("Buscando....")
-        lista1=controller.addartistyear(catalog, año1, año2)
-        nartistas=lt.size(lista1)
-        print("El número total de artistas en dicho rango es de: "+ str(nartistas))
+        list1=controller.addartistyear(catalog, year1, year2)
+        nartists=lt.size(list1)
+        print("El número total de artistas en dicho rango es de: "+ str(nartists))
         print(" los 3 primeros artistas del rango cronológico  son: ")
-        tresfirst1=(lt.getElement(lista1,1),lt.getElement(lista1,2),lt.getElement(lista1,3))
-        for artistaF in tresfirst1:
-            print("Nombre: "+artistaF["DisplayName"]+
-                  ". Fecha de nacimiento: " +artistaF["BeginDate"]+
-                  ". Fecha de fallecimiento: " +artistaF["EndDate"]+
-                  ". Nacionalidad: " +artistaF["Nationality"]+
-                  ". Género: " +artistaF["Gender"])
+        threefirst1=(lt.getElement(list1,1),lt.getElement(list1,2),lt.getElement(list1,3))
+        for artistF in threefirst1:
+            print("Nombre: "+artistF["DisplayName"]+
+                  ". Fecha de nacimiento: " +artistF["BeginDate"]+
+                  ". Fecha de fallecimiento: " +artistF["EndDate"]+
+                  ". Nacionalidad: " +artistF["Nationality"]+
+                  ". Género: " +artistF["Gender"])
         print("los 3 últimos artistas del rango cronológico (nombre, año de nacimiento, año de fallecimiento, nacionalidad y género) son: ")
-        treslast1=(lt.getElement(lista1,nartistas) ,lt.getElement(lista1,nartistas-1),lt.getElement(lista1,nartistas-2))
-        for artistaL in treslast1:
-            print("Nombre: "+artistaL["DisplayName"]+
-                  ". Fecha de nacimiento: " +artistaL["BeginDate"]+
-                  ". Fecha de fallecimiento: " +artistaL["EndDate"]+
-                  ". Nacionalidad: " +artistaL["Nationality"]+
-                  ". Género: " +artistaL["Gender"])
+        threelast1=(lt.getElement(list1,nartists) ,lt.getElement(list1,nartists-1),lt.getElement(list1,nartists-2))
+        for artistL in threelast1:
+            print("Nombre: "+artistL["DisplayName"]+
+                  ". Fecha de nacimiento: " +artistL["BeginDate"]+
+                  ". Fecha de fallecimiento: " +artistL["EndDate"]+
+                  ". Nacionalidad: " +artistL["Nationality"]+
+                  ". Género: " +artistL["Gender"])
         stop_time= time.process_time()
         elapsed_time_mseg=(stop_time - start_time)*1000
         print(elapsed_time_mseg)
 
     elif int(inputs[0]) == 2:
-        fecha1= input("Ingrese la fecha inicial (AAAA MM DD): ")
-        fecha2= input("Ingrese la fecha final (AAAA MM DD): ")
+        date1= input("Ingrese la fecha inicial (AAAA MM DD): ")
+        date2= input("Ingrese la fecha final (AAAA MM DD): ")
         start_time=time.process_time()
         print("Creando lista ....")
-        lista2= controller.addartworkyear(catalog, fecha1, fecha2)
-        Nobrascompra=controller.purchaseart(lista2)
-        tamaño=lt.size(lista2)
-        print("El número total de obras en el rango cronológico es de: "+ str(tamaño))
-        print("El número total de obras adquiridas por compra es de: "+str(Nobrascompra))
+        list2= controller.addartworkyear(catalog, date1, date2)
+        Npurchaseartworks=controller.purchaseart(list2)
+        size=lt.size(list2)
+        print("El número total de obras en el rango cronológico es de: "+ str(size))
+        print("El número total de obras adquiridas por compra es de: "+str(Npurchaseartworks))
         print("Las tres primeras obras del rango cronológico son: ") 
-        tresfirst2= (lt.getElement(lista2,1),lt.getElement(lista2,2),lt.getElement(lista2,3))
-        for obraF in tresfirst2:
-            print("Título: "+obraF["Title"]+ 
-                  ". Fecha: "+obraF["Date"]+
-                  ". Medio: " +obraF["Medium"]+
-                  ". Dimensiones: " +obraF["Dimensions"])
+        threefirst2= (lt.getElement(list2,1),lt.getElement(list2,2),lt.getElement(list2,3))
+        for artworkF in threefirst2:
+            print("Título: "+artworkF["Title"]+ 
+                  ". Fecha: "+artworkF["Date"]+
+                  ". Medio: " +artworkF["Medium"]+
+                  ". Dimensiones: " +artworkF["Dimensions"])
             print("Los artistas de la obra son: ")
-            for artist in lt.iterator(obraF["Artists"]):
+            for artist in lt.iterator(artworkF["Artists"]):
                 print(artist["DisplayName"])
         print("Las tres últimas obras del rango cronológico son: " )
-        treslast2=(lt.getElement(lista2,tamaño),lt.getElement(lista2,tamaño-1),lt.getElement(lista2,tamaño-2))
-        for obraL in treslast2:
-            print("Título: "+obraL["Title"]+
-                  ". Fecha: "+obraL["Date"]+
-                  ". Medio: " +obraL["Medium"]+
-                  ". Dimensiones:" +obraL["Dimensions"])
+        threelast2=(lt.getElement(list2,size),lt.getElement(list2,size-1),lt.getElement(list2,size-2))
+        for artworkL in threelast2:
+            print("Título: "+artworkL["Title"]+
+                  ". Fecha: "+artworkL["Date"]+
+                  ". Medio: " +artworkL["Medium"]+
+                  ". Dimensiones:" +artworkL["Dimensions"])
             print("Los artistas de la obra son: ")
-            for artist in lt.iterator(obraF["Artists"]):
+            for artist in lt.iterator(artworkF["Artists"]):
                 print(artist["DisplayName"])
         stop_time= time.process_time()
         elapsed_time_mseg=(stop_time - start_time)*1000
@@ -138,28 +140,28 @@ while True:
     elif int(inputs[0]) == 3:
         name=input("Ingrese el nombre del artista: ")
         start_time=time.process_time()
-        totalobras=controller.totalobrasartista(catalog, name)
-        totalo=lt.size(totalobras)
+        totalartworkss=controller.totalartworksartist(catalog, name)
+        totalo=lt.size(totalartworkss)
         if totalo==0:
             print("El artista no tiene obras")
         else:
-           totalmedio=controller.totalmedios(totalobras)
-           totalm=lt.size(totalmedio)
-           nombretec=controller.primeratecnica(totalmedio)
-           listadotec=controller.obrastecnica1(nombretec,totalobras)
+           totalmedium=controller.totalmediums(totalartworkss)
+           totalm=lt.size(totalmedium)
+           nametec=controller.firsttechnique(totalmedium)
+           listtec=controller.artworkstechnique1(nametec,totalartworkss)
            print("El total de las obras del artista "+name+" es de: "+str(totalo))
            print("El total de tecnicas utilizadas es de: "+str(totalm))
            print("Las técnicas más utilizada por el artista son: ")
-           cincofirst=(lt.getElement(totalmedio,1), lt.getElement(totalmedio,2), lt.getElement(totalmedio,3), lt.getElement(totalmedio,4), lt.getElement(totalmedio,5))
-           for medium in cincofirst:
-               print (medium["Nombre"],medium["valor"])           
+           fivefirst=(lt.getElement(totalmedium,1), lt.getElement(totalmedium,2), lt.getElement(totalmedium,3), lt.getElement(totalmedium,4), lt.getElement(totalmedium,5))
+           for medium in fivefirst:
+               print (medium["Name"],medium["value"])           
            print("El listado de las obras de dicha técnica es: ")
-           tresfirst=(lt.getElement(listadotec,1), lt.getElement(listadotec,2), lt.getElement(listadotec,3))
-           for obra in tresfirst:
-              print("Titulo: "+obra["Title"]+
-                    ". Fecha: "+obra["Date"]+
-                    ". Medio: "+obra["Medium"]+
-                    ". Dimension:"+obra["Dimensions"])
+           threefirst=(lt.getElement(listtec,1), lt.getElement(listtec,2), lt.getElement(listtec,3))
+           for artwork in threefirst:
+              print("Titulo: "+artwork["Title"]+
+                    ". Fecha: "+artwork["Date"]+
+                    ". Medio: "+artwork["Medium"]+
+                    ". Dimension:"+artwork["Dimensions"])
         stop_time= time.process_time()
         elapsed_time_mseg=(stop_time - start_time)*1000
         print(elapsed_time_mseg)
@@ -167,17 +169,17 @@ while True:
 
 
     elif int(inputs[0])== 4:
-        resultado= controller.obrasNacionalidad(catalog)
+        result= controller.artworksNationality(catalog)
         start_time=time.process_time()
-        diez= resultado[0]
-        mejor= resultado[1]
+        ten= result[0]
+        best= result[1]
         print("TOP 10 NACIONALIDADES EN EL MOMA:")
         
-        for i in diez:
+        for i in ten:
             print(i)
         
-        print("\nEL TOP 10 SON:"+ str(diez[0][0])+"incluye: "+str(diez[0][1])+"obras")
-        print("\nPRIMEROS Y UTLIMOS TRES:"+str(diez[0][0]))
+        print("\nEL TOP 10 SON:"+ str(ten[0][0])+"incluye: "+str(ten[0][1])+"obras")
+        print("\nPRIMEROS Y UTLIMOS TRES:"+str(ten[0][0]))
         stop_time= time.process_time()
         elapsed_time_mseg=(stop_time - start_time)*1000
         print(elapsed_time_mseg)
@@ -187,76 +189,68 @@ while True:
     elif int(inputs[0])== 5:
        depto=input("Ingrese el departamento del museo que desea transportar: ")
        start_time=time.process_time()
-       listaobras=controller.totalobras(catalog, depto)
-       totalobr=lt.size(listaobras)
-       price=controller.price(listaobras)
-       precio=price[0]
-       weight=controller.weight(listaobras)
-       listaobrasviejas=controller.oldest(listaobras)
-       print("El total de obras para transportar es de: "+str(totalobr))
-       print("El estimado en USD del precio del servicio es de: "+str(precio))
+       listartworks=controller.totalartworks(catalog, depto)
+       totalart=lt.size(listartworks)
+       price=controller.price(listartworks)
+       priceart=price[0]
+       weight=controller.weight(listartworks)
+       listoldest=controller.oldest(listartworks)
+       print("El total de obras para transportar es de: "+str(totalart))
+       print("El estimado en USD del precio del servicio es de: "+str(priceart))
        print("El peso estimado de las obras a transportar es de: "+str(weight))
        oldest=controller.oldest(price[1])
-       listacaras=price[1]
+       listexpensive1=price[1]
        fiveoldest=(lt.getElement(oldest,1),lt.getElement(oldest,2), lt.getElement(oldest,3), lt.getElement(oldest,4), lt.getElement(oldest,5))
        print("Las 5 obras más antiguas a transportar son: ")
-       for obra in fiveoldest:
-            print("Titulo: "+obra["Title"]+
-                 ". Clasificación: " +obra["Classification"]+
-                 ". Fecha: " +obra["Date"]+
-                 ". Medio: " +obra["Medium"]+
-                 ". Dimensiones: " +obra["Dimensions"]+ 
-                 ". Costo asociado al transporte: "+str(obra["Price"]))
+       for artwork in fiveoldest:
+            print("Titulo: "+artwork["Title"]+
+                 ". Clasificación: " +artwork["Classification"]+
+                 ". Fecha: " +artwork["Date"]+
+                 ". Medio: " +artwork["Medium"]+
+                 ". Dimensiones: " +artwork["Dimensions"]+ 
+                 ". Costo asociado al transporte: "+str(artwork["Price"]))
             print("El/los artista(s) de la obra son: ")
             for artist in lt.iterator(obra["Artists"]):
                 print(artist["DisplayName"])
-       listaexpensive=controller.expensive(listacaras)
-       fiveexpensive=(lt.getElement(listaexpensive,1), lt.getElement(listaexpensive,2),lt.getElement(listaexpensive,3), lt.getElement(listaexpensive,4), lt.getElement(listaexpensive,5))
+       listexpensive=controller.expensive(listexpensive1)
+       fiveexpensive=(lt.getElement(listexpensive,1), lt.getElement(listexpensive,2),lt.getElement(listexpensive,3), lt.getElement(listexpensive,4), lt.getElement(listexpensive,5))
        print("Las 5 obras más antiguas a transportar son :" )
        for obra in fiveexpensive:
-            print("Titulo: "+obra["Title"]+
-                 ". Clasificación: " +obra["Classification"]+
-                 ". Fecha: " +obra["Date"]+
-                 ". Medio: " +obra["Medium"]+
-                 ". Dimensiones: " +obra["Dimensions"]+ 
-                 ". Costo asociado al transporte: "+str(obra["Price"]))
+            print("Titulo: "+artwork["Title"]+
+                 ". Clasificación: " +artwork["Classification"]+
+                 ". Fecha: " +artwork["Date"]+
+                 ". Medio: " +artwork["Medium"]+
+                 ". Dimensiones: " +artwork["Dimensions"]+ 
+                 ". Costo asociado al transporte: "+str(artwork["Price"]))
             print("El/los artista(s) de la obra son: ")
-            for artist in lt.iterator(obra["Artists"]):
+            for artist in lt.iterator(artwork["Artists"]):
                 print(artist["DisplayName"])
        stop_time= time.process_time()
        elapsed_time_mseg=(stop_time - start_time)*1000
        print(elapsed_time_mseg)
 
     elif int(inputs[0]) == 6:
-        nObras= int(input("Ingrese el número de obras a buscar: "))
-        medio= input("Ingrese el medio de las obras: ")
+        nArtworks= int(input("Ingrese el número de obras a buscar: "))
+        medium= input("Ingrese el medio de las obras: ")
+        start_time=time.process_time()
+        result= controller.nArtworks(catalog, nArtworks, medium)
+        print( "las obras "+ str(nArtworks)+ " más antiguas son: "+ str(result))
+        elapsed_time_mseg=(stop_time - start_time)*1000
+        print(elapsed_time_mseg)
+    
 
-        resultado= controller.nObras(catalog, nObras, medio)
-        print( "las obras "+ str(nObras)+ " más antiguas son: "+ str(resultado))
-       
+#Lab 6
+    elif int(inputs[0])==7:
+        country= input("Ingrese la nacionalidad de la que desea saber el número de obras: ")
+        start_time=time.process_time()
+        artworksnati=controller.artwinnation(catalog, country)
+        #print(artworksnati)
+        print("El número de obras de la nacionalidad "+country+" es: "+str(lt.size(artworksnati)))
+        stop_time= time.process_time()
+        elapsed_time_mseg=(stop_time - start_time)*1000
+        print(elapsed_time_mseg)
+   
     else:
         sys.exit(0)
-sys.exit(0)
 
-def printMenu():
-    print("Bienvenido")
-    print("1- Cargar información en el catálogo")
-    print("2- ")
 
-catalog = None
-
-"""
-Menu principal
-"""
-while True:
-    printMenu()
-    inputs = input('Seleccione una opción para continuar\n')
-    if int(inputs[0]) == 1:
-        print("Cargando información de los archivos ....")
-
-    elif int(inputs[0]) == 2:
-        pass
-
-    else:
-        sys.exit(0)
-sys.exit(0)

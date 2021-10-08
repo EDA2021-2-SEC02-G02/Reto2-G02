@@ -23,6 +23,7 @@
 import config as cf
 import model
 import csv
+from DISClib.ADT import list as lt
 
 
 """
@@ -36,70 +37,96 @@ def initcatalog():
 
 # Funciones para la carga de datos
 def loaddata(catalog):
-    loadartistas(catalog)
-    loadobras(catalog)
+    try:
+        
+        loadartists(catalog)
+        loadartworks(catalog)
+        load_tables(catalog)
+    except Exception as e:
+        raise e
 
-def loadartistas(catalog):
+def loadartists(catalog):
     artistfile=cf.data_dir+"Artists-utf8-small.csv"
     input_file=csv.DictReader(open(artistfile,encoding="utf-8"))
-    for artista in input_file:
-        model.addartista(catalog,artista)
+    for artist in input_file:
+        model.addartist(catalog,artist)
 
-def loadobras(catalog):
-    obrasfile=cf.data_dir+"Artworks-utf8-small.csv"
-    input_file=csv.DictReader(open(obrasfile,encoding="utf-8"))
-    for obra in input_file:
-        model.addobra(catalog,obra)
+def loadartworks(catalog):
+    artworksfile=cf.data_dir+"Artworks-utf8-small.csv"
+    input_file=csv.DictReader(open(artworksfile,encoding="utf-8"))
+    for artwork in input_file:
+        model.addartwork(catalog,artwork)
+
+def load_tables(catalog):
+
+    # Carganda datos en lista de obras de arte e indice de medios
+    for artwork in lt.iterator(catalog["Artwork"]):
+        #model.addartwork(catalog,artwork)
+        model.addMedium(catalog, artwork)
+
+    #Cargando lista de artistas e indice de nacionalidades de obras
+    for artist in lt.iterator(catalog["Artist"]):
+        #model.addartist(catalog,artist)
+        nationality=artist["Nationality"]
+        tablenationality=catalog["Nationality"]
+        artworklist=artist["Artworks"]
+        #print(lt.size(artworklist))
+        model.addNationality2(tablenationality, nationality, artworklist)
+
 
 # Funciones de ordenamiento
 # REQ. 1: listar cronológicamente los artistas 
-def addartistyear(catalog, año1, año2):
-    return model.addartistyear(catalog, año1, año2)
+def addartistyear(catalog, year1, year2):
+    return model.addartistyear(catalog, year1, year2)
 
 
 #REQ. 2: listar cronológicamente las adquisiciones 
-def addartworkyear(catalog, fecha1, fecha2):
-    return model.addartworkyear(catalog, fecha1, fecha2)
+def addartworkyear(catalog, date1, date2):
+    return model.addartworkyear(catalog, date1, date2)
 
-def purchaseart(lista2):
-    return model.purchaseart(lista2)
+def purchaseart(list2):
+    return model.purchaseart(list2)
 
 
 #REQ. 3: clasificar las obras de un artista por técnica (Individual)
-def totalobrasartista (catalog, name):
-    return model.totalobrasartista(catalog, name)
+def totalartworksartist(catalog, name):
+    return model.totalartworksartist(catalog, name)
 
-def totalmedios(obras):
-    return model.totalmedios(obras)
+def totalmediums(artworks):
+    return model.totalmediums(artworks)
 
-def primeratecnica(sortedlist):
-    return model.primeratecnica(sortedlist)
+def firsttechnique(sortedlist):
+    return model.firsttechnique(sortedlist)
 
-def obrastecnica1(nombre, obras):
-    return model.obrastecnica1(nombre, obras)
+def artworkstechnique1(name, artworks):
+    return model.artworkstechnique1(name, artworks)
 
 
 # REQ. 4: clasificar las obras por la nacionalidad de sus creadores
-def obrasNacionalidad(catalog):
-    return model.diezNacionalidades(catalog)
+def artworksNationality(catalog):
+    return model.tenNationalities(catalog)
 
 
 #REQ. 5: transportar obras de un departamento
-def totalobras(catalog, depto):
-    return model.totalobras(catalog, depto)
+def totalartworks(catalog, depto):
+    return model.totalartworks(catalog, depto)
 
-def price(listaobras):
-    return model.price(listaobras)
+def price(listartworks):
+    return model.price(listartworks)
 
-def weight(listaobras):
-    return model.weight(listaobras)
+def weight(listartworks):
+    return model.weight(listartworks)
 
-def oldest(listaobras):
-    return model.oldest(listaobras)
+def oldest(listartworks):
+    return model.oldest(listartworks)
 
-def expensive(listaobras):
-    return model.expensive(listaobras)
+def expensive(listartworks):
+    return model.expensive(listartworks)
 
-#Lab
-def nObras(catalog, nObras, medio):
-    return model.antiguas( catalog, nObras, medio)
+#Lab 5
+def nArtworks(catalog, nArtworks, medium):
+    return model.ancient( catalog, nArtworks, medium)
+#Lab 6
+def artwinnation(catalog, country):
+    ans=model.artwinnation (catalog, country)
+    return ans
