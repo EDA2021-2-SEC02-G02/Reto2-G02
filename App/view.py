@@ -65,20 +65,20 @@ while True:
 
 #Carga de datos
     if int(inputs[0]) == 0:
-        start_time=time.process_time()
+        start_time = time.perf_counter()
         print("Cargando información de los archivos ....")
         catalog=inicializar_catalogo()
         cargarinfo(catalog)
         print("Artistas cargados "+str(lt.size(catalog["Artist"])))
         print("Obras cargadas "+str(lt.size(catalog["Artwork"])))
-        stop_time= time.process_time()
-        elapsed_time_mseg=(stop_time - start_time)*1000
-        print(elapsed_time_mseg)
+        stop_time = time.perf_counter()
+        delta_time = (stop_time - start_time)*10000
+        print(delta_time)
 
     elif int(inputs[0]) == 1:
         year1= int(input("Ingrese el año inicial del que desea organizar los artistas: "))
         year2= int(input("Ingrese el año final del que desea organizar los artistas: "))
-        start_time=time.process_time()
+        start_time = time.perf_counter()
         print("Buscando....")
         list1=controller.addartistyear(catalog, year1, year2)
         nartists=lt.size(list1)
@@ -99,14 +99,14 @@ while True:
                   ". Fecha de fallecimiento: " +artistL["EndDate"]+
                   ". Nacionalidad: " +artistL["Nationality"]+
                   ". Género: " +artistL["Gender"])
-        stop_time= time.process_time()
-        elapsed_time_mseg=(stop_time - start_time)*1000
-        print(elapsed_time_mseg)
+        stop_time = time.perf_counter()
+        delta_time = (stop_time - start_time)*10000
+        print(delta_time)
 
     elif int(inputs[0]) == 2:
         date1= input("Ingrese la fecha inicial (AAAA MM DD): ")
         date2= input("Ingrese la fecha final (AAAA MM DD): ")
-        start_time=time.process_time()
+        start_time = time.perf_counter()
         print("Creando lista ....")
         list2= controller.addartworkyear(catalog, date1, date2)
         Npurchaseartworks=controller.purchaseart(list2)
@@ -133,13 +133,13 @@ while True:
             print("Los artistas de la obra son: ")
             for artist in lt.iterator(artworkF["Artists"]):
                 print(artist["DisplayName"])
-        stop_time= time.process_time()
-        elapsed_time_mseg=(stop_time - start_time)*1000
-        print(elapsed_time_mseg)
+        stop_time = time.perf_counter()
+        delta_time = (stop_time - start_time)*10000
+        print(delta_time)
         
     elif int(inputs[0]) == 3:
         name=input("Ingrese el nombre del artista: ")
-        start_time=time.process_time()
+        start_time = time.perf_counter()
         totalartworkss=controller.totalartworksartist(catalog, name)
         totalo=lt.size(totalartworkss)
         if totalo==0:
@@ -162,15 +162,15 @@ while True:
                     ". Fecha: "+artwork["Date"]+
                     ". Medio: "+artwork["Medium"]+
                     ". Dimension:"+artwork["Dimensions"])
-        stop_time= time.process_time()
-        elapsed_time_mseg=(stop_time - start_time)*1000
-        print(elapsed_time_mseg)
+        stop_time = time.perf_counter()
+        delta_time = (stop_time - start_time)*10000
+        print(delta_time)
         
 
 
     elif int(inputs[0])== 4:
         result= controller.artworksNationality(catalog)
-        start_time=time.process_time()
+        start_time = time.perf_counter()
         ten= result[0]
         best= result[1]
         print("TOP 10 NACIONALIDADES EN EL MOMA:")
@@ -180,15 +180,15 @@ while True:
         
         print("\nEL TOP 10 SON:"+ str(ten[0][0])+"incluye: "+str(ten[0][1])+"obras")
         print("\nPRIMEROS Y UTLIMOS TRES:"+str(ten[0][0]))
-        stop_time= time.process_time()
-        elapsed_time_mseg=(stop_time - start_time)*1000
-        print(elapsed_time_mseg)
+        stop_time = time.perf_counter()
+        delta_time = (stop_time - start_time)*10000
+        print(delta_time)
         
 
 
     elif int(inputs[0])== 5:
        depto=input("Ingrese el departamento del museo que desea transportar: ")
-       start_time=time.process_time()
+       start_time = time.perf_counter()
        listartworks=controller.totalartworks(catalog, depto)
        totalart=lt.size(listartworks)
        price=controller.price(listartworks)
@@ -225,30 +225,34 @@ while True:
             print("El/los artista(s) de la obra son: ")
             for artist in lt.iterator(artwork["Artists"]):
                 print(artist["DisplayName"])
-       stop_time= time.process_time()
-       elapsed_time_mseg=(stop_time - start_time)*1000
-       print(elapsed_time_mseg)
+       stop_time = time.perf_counter()
+       delta_time = (stop_time - start_time)*10000
+       print(delta_time)
 
+#Lab 5
     elif int(inputs[0]) == 6:
         nArtworks= int(input("Ingrese el número de obras a buscar: "))
         medium= input("Ingrese el medio de las obras: ")
-        start_time=time.process_time()
+        start_time = time.perf_counter()
         result= controller.nArtworks(catalog, nArtworks, medium)
-        print( "las obras "+ str(nArtworks)+ " más antiguas son: "+ str(result))
-        elapsed_time_mseg=(stop_time - start_time)*1000
-        print(elapsed_time_mseg)
+        print( "las obras "+ str(nArtworks)+ " más antiguas son: ")
+        for artwork in lt.iterator(result):
+          print (artwork ["Title"])
+        stop_time = time.perf_counter()
+        delta_time = (stop_time - start_time)*10000
+        print(delta_time)
     
 
 #Lab 6
     elif int(inputs[0])==7:
         country= input("Ingrese la nacionalidad de la que desea saber el número de obras: ")
-        start_time=time.process_time()
+        start_time = time.perf_counter()
         artworksnati=controller.artwinnation(catalog, country)
         #print(artworksnati)
         print("El número de obras de la nacionalidad "+country+" es: "+str(lt.size(artworksnati)))
-        stop_time= time.process_time()
-        elapsed_time_mseg=(stop_time - start_time)*1000
-        print(elapsed_time_mseg)
+        stop_time = time.perf_counter()
+        delta_time = (stop_time - start_time)*10000
+        print(delta_time)
    
     else:
         sys.exit(0)

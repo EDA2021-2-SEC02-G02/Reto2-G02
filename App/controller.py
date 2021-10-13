@@ -38,7 +38,6 @@ def initcatalog():
 # Funciones para la carga de datos
 def loaddata(catalog):
     try:
-        
         loadartists(catalog)
         loadartworks(catalog)
         load_tables(catalog)
@@ -59,10 +58,6 @@ def loadartworks(catalog):
 
 def load_tables(catalog):
 
-    # Carganda datos en lista de obras de arte e indice de medios
-    for artwork in lt.iterator(catalog["Artwork"]):
-        #model.addartwork(catalog,artwork)
-        model.addMedium(catalog, artwork)
 
     #Cargando lista de artistas e indice de nacionalidades de obras
     for artist in lt.iterator(catalog["Artist"]):
@@ -71,7 +66,7 @@ def load_tables(catalog):
         tablenationality=catalog["Nationality"]
         artworklist=artist["Artworks"]
         #print(lt.size(artworklist))
-        model.addNationality2(tablenationality, nationality, artworklist)
+        model.addNationality(tablenationality, nationality, artworklist)
 
 
 # Funciones de ordenamiento

@@ -49,13 +49,16 @@ def newCatalog():
 
     catalog['Artwork']=lt.newList('SINGLE_LINKED', cmpfunction=compareobjectID)
 
-    catalog ['Medium']=mp.newMap(20,
-                                maptype="CHAINING",
-                                loadfactor=4,
+#lab 5
+    catalog ['Medium']=mp.newMap(21191,
+                                maptype="PROBING",
+                                loadfactor=0.8,
                                 comparefunction=comparemedium)
+
+#lab 6                                
     catalog ["Nationality"]=mp.newMap(119,
-                                    maptype="CHAINING",
-                                    loadfactor=1.07,
+                                    maptype="PROBING",
+                                    loadfactor=0.8,
                                     comparefunction=comparenation)
    # catalog["yearartist"]=mp.newMap(10,
    #                                maptype="PROBING",
@@ -123,10 +126,7 @@ def addMedium(catalog, artwork):
         raise e
 
 def newMedium(medium):
-    """
-    Esta funcion crea la estructura de libros asociados
-    a un año.
-    """
+  
     entry = {'Medium': "", "Artworks": None}
     entry['Medium'] = medium
     entry['Artworks'] = lt.newList('ARRAY_LIST', comparingArtworks)
@@ -143,33 +143,33 @@ def comparingArtworks(artwork1, artwork2):
 
 def ancient (catalog, nartworks, medium):
   catamediums=catalog["Medium"]
-  
   conjmediums=mp.get(catamediums,medium)
   conjmediums=me.getValue(conjmediums)["Artworks"]
   organize=sortdate(conjmediums)
   answer= lt.subList(organize,1,nartworks)
   return answer
 
-def addNationality(catalog, artist):
-  try:
-        nationalities = catalog['Nationality']
-        if (artist['Nationality'] != ''):
-            nationality = artist['Nationality']
             
-        else:
-            nationality = "unknown"
-        existnationality = mp.contains(nationalities, nationality)
-        if existnationality:
-            entry = mp.get(nationalities, nationality)
-            listNation = me.getValue(entry)
-        else:
-            listNation = newNationality(nationality)
-            mp.put(nationalities, nationality, listNation)
-        lt.addLast(listNation['Artworks'], artist["Artwork"])
+def addMedium2 (tablemedium, medium,artworklist):
+  try:
+    #si el medio no esta en el indice
+    if mp.contains (tablemedium, medium)==False and medium == artworklist["Medium"]:
+      #agregar una nueva medio al indice
+        mp.put(tablemedium,medium,artworklist)
+    elif mp. contains(tablemedium,medium)==True and medium == artworklist["Medium"]:
+      #saco los datos del medio
+      temp=mp.get(tablemedium,medium)
+      temp=me.getValue(temp)
+      #agrego las nuevas obras a las ya existentes
+      for artwork in lt.iterator(temp):
+        lt.addLast(artworklist, artwork)
+      #actualizar el índice de medios
+      mp.put (tablemedium,medium,artworklist)
   except Exception as e:
         raise e
 
-def addNationality2 (tablenationality, nationality, artworklist):
+
+def addNationality (tablenationality, nationality, artworklist):
   try:
     #si la nacionalidad no esta en el indice
     #print (mp.keySet(tablenationality))
@@ -189,29 +189,12 @@ def addNationality2 (tablenationality, nationality, artworklist):
         #print(artwork)
       #Actualizar indice de nacionalidades
       mp.put(tablenationality,nationality,artworklist)
-      print(lt.size(artworklist))
+      #print(lt.size(artworklist))
 
   except Exception as e:
         raise e
 
-
-def newNationality(nationality):
-    """
-    Esta funcion crea la estructura de libros asociados
-    a un año.
-    """
-    entry = {'Nationality': "", "Artworks": None}
-    entry['Nationality'] = nationality
-    entry['Artworks'] = lt.newList('ARRAY_LIST', comparingArtists)
-    return entry
-
-def comparingArtists(artist1, artist2):
-    if (int(artist1) == int(artist2)):
-        return 0
-    elif (int(artist1) > int(artist2)):
-        return 1
-    else:
-        return 0
+    
 
 
 def artwinnation (catalog, country):
