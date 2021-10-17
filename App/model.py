@@ -64,7 +64,15 @@ def newCatalog():
    #                                maptype="PROBING",
    #                                loadfactor=0.5,
    #                                comparefunction=compareyearartist)                                
+    
+
+#Req 1
+    catalog ['YearArtist']=mp.newMap(21191,
+                                maptype="PROBING",
+                                loadfactor=0.8,
+                                comparefunction=compararAño)
     return catalog
+
 
 
 def compareconstituentID(artist1ID, artist2ID):
@@ -76,6 +84,15 @@ def compareconstituentID(artist1ID, artist2ID):
         return 1
   else:
         return -1
+
+def compararAño (id, tag):
+  añoEntrada= me.getKey(tag)
+  if (id == añoEntrada):
+    return 0
+  elif (id > añoEntrada):
+    return 1
+  else:
+    return 0
 
 def compareobjectID (artwork1ID, artwork2ID):
   artwork1ID=int(artwork1ID["ObjectID"])
@@ -226,6 +243,16 @@ def addartist(catalog, artists):
              "Artworks":lt.newList("ARRAY_LIST",cmpfunction=compareobjectID)
              }
         lt.addLast(catalog["Artist"],artist)
+
+def newYear(year):
+    """
+    Esta funcion crea la estructura de libros asociados
+    a un año.
+    """
+    entry = {'YearArtist': "", 'Artworks': None}
+    entry['YearArtist'] = year
+    entry['Artworks'] = lt.newList('SINGLE_LINKED', compararAño)
+    return entry
   
 
 def addartwork(catalog, artworks):
@@ -271,8 +298,21 @@ def compareartworks(ID,artists):
 
 
 # Funciones para creacion de datos  
-# REQ. 1: listar cronológicamente los artistas  
- 
+# REQ. 1: listar cronológicamente los artistas
+
+def getArtistByRange(catalog, initialDate,finalDate):
+    """
+    Retorna artistas en un rango de años
+    """
+    lst = mp.values(catalog['YearArtist'], initialDate, finalDate)
+    totArtist=0
+    valores= {}
+    for i in lt.iterator(lst):
+      totArtist+= lt.size(catalog['YearArtist'])
+      valores= me.getValue(lst)['years']
+      return totArtist, valores
+
+
 def addartistyear(catalog, year1, year2):
     artistsinrange=lt.newList("ARRAY_LIST")
     i=1

@@ -23,6 +23,7 @@
 import config as cf
 import model
 import csv
+import datetime
 from DISClib.ADT import list as lt
 
 
@@ -72,7 +73,11 @@ def load_tables(catalog):
 # Funciones de ordenamiento
 # REQ. 1: listar cronológicamente los artistas 
 def addartistyear(catalog, year1, year2):
+    #initialDate = datetime.datetime.strptime(year1, '%Y-%m-%d')
+    #finalDate = datetime.datetime.strptime(year2, '%Y-%m-%d')
     return model.addartistyear(catalog, year1, year2)
+
+
 
 
 #REQ. 2: listar cronológicamente las adquisiciones 
