@@ -73,12 +73,18 @@ def load_tables(catalog):
         tabledate= catalog["yearartworks"]
         model.adddatereq2(tabledate, dateacquired, artwork)
     
-    #cargando losta de obras req3
+    #cargando lista de obras req3
     for artist in lt.iterator(catalog["Artist"]):
         name=artist["DisplayName"]
         tablename=catalog["Nameartist"]
         artworklist=artist["Artworks"]
         model.addnames(tablename, name, artworklist)
+
+    #cargando lista de obras req5
+    for artwork in lt.iterator(catalog["Artwork"]):
+        depto=artwork["Department"]
+        tabledepto=catalog["Departmentart"]
+        model.adddepto(tabledepto, depto, artwork)
 
 # Funciones de ordenamiento
 # REQ. 1: listar cronológicamente los artistas 

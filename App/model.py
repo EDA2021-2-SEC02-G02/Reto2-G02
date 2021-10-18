@@ -78,6 +78,12 @@ def newCatalog():
                                     maptype="CHAINING",
                                     loadfactor=1,
                                     comparefunction=comparename)
+                            
+#Req 5
+    catalog["Departmentart"]=mp.newMap(15166,
+                                    maptype="CHAINING",
+                                    loadfactor=0.75,
+                                    comparefunction=comparedepartment)
     return catalog
 
 
@@ -143,6 +149,15 @@ def comparename (keyname, name):
   if (keyname==nameentry):
     return 0
   elif (keyname>nameentry):
+    return 1
+  else:
+    return -1
+
+def comparedepartment (keydepto, depto):
+  deptoentry=me.getKey(depto)
+  if(keydepto==deptoentry):
+    return 0
+  elif (keydepto>deptoentry):
     return 1
   else:
     return -1
@@ -273,6 +288,23 @@ def addnames(tablename, name, artworklist):
         lt.addLast(artworklist, artwork)
         #actualizar el indice de Nameartist
       mp.put(tablename, name, artworklist)
+  except Exception as e:
+        raise e
+
+#agregar datos al indice del req5
+def adddepto (tabledepto, depto, artworklist):
+  try:
+    #si el depto no esta en el indice
+    if depto!= "" and mp.contains(tabledepto, depto)==False:
+      #agregar nuevo departamento al indice
+      mp.put(tabledepto, depto, artworklist)
+    #si el departamento ya esta en el indice
+    elif mp.contains (tabledepto,depto)==True:
+      temp=mp.get (tabledepto,depto)
+      temp=me.getValue(temp)
+      for artwork in lt.iterator(temp):
+        lt.addLast(artworklist, artwork)
+      mp.put(tabledepto, depto, artworklist)
   except Exception as e:
         raise e
 
@@ -522,18 +554,16 @@ def artworkstechnique (name,artworks):
 #REQ. 5: transportar obras de un departamento
 #Total de obras para transportar (size de esto)
 def totalartworks(catalog, depto):
-   listartworks= lt.newList("ARRAY_LIST")
-   artworks=catalog["Artwork"]
-   for artwork in lt.iterator(artworks):
-     if artwork["Department"]==depto:
-       lt.addLast(listartworks,artwork)
-   return listartworks
+   deptomap=catalog["Departmentart"]
+   indexdepto=mp.get(deptomap, depto)
+   artworksdepto=me.getValue(indexdepto)
+   return artworksdepto
 
 #Estimado en USD del precio del servicio
-def price (listartworks):
+def price (artworksdepto):
     totalprice=0
     cost=72
-    for artwork in lt.iterator(listartworks):
+    for artwork in lt.iterator(artworksdepto):
        kgprice=0
        m2price1=0
        m2price2=0
@@ -599,12 +629,12 @@ def price (listartworks):
          lastprice=48
        artwork["Price"]=lastprice
        totalprice+=lastprice
-    return (totalprice, listartworks)
+    return (totalprice, artworksdepto)
 
 #Peso estimado de las obras
-def weight (listartworks):
+def weight (artworksdepto):
   weight=0
-  for artwork in lt.iterator(listartworks):
+  for artwork in lt.iterator(artworksdepto):
     artweight=artwork["Weight"]
     if artweight== "":
       weight+=0
@@ -614,12 +644,12 @@ def weight (listartworks):
   return weight
 
 #Obras viejas
-def oldest (listartworks):
-  sortedlist=sortoldest(listartworks)
+def oldest (artworksdepto):
+  sortedlist=sortoldest(artworksdepto)
   return sortedlist
 
-def sortoldest (listartworks):
-  sorted_list=mg.sort(listartworks, cmpoldest)
+def sortoldest (artworksdepto):
+  sorted_list=mg.sort(artworksdepto, cmpoldest)
   return sorted_list
 
 def cmpoldest(date1, date2):
@@ -629,12 +659,12 @@ def cmpoldest(date1, date2):
     return date1>date2
 
 #mas costosas
-def expensive(listartworks):
-  sortlist=sortexpensive(listartworks)
+def expensive(artworksdepto):
+  sortlist=sortexpensive(artworksdepto)
   return sortlist
 
-def sortexpensive(listartworks):
-  sort_list=mg.sort(listartworks, cmpexpensive)
+def sortexpensive(artworksdepto):
+  sort_list=mg.sort(artworksdepto, cmpexpensive)
   return sort_list
 
 def cmpexpensive(price1,price2):
