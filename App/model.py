@@ -60,17 +60,24 @@ def newCatalog():
                                     maptype="PROBING",
                                     loadfactor=0.8,
                                     comparefunction=comparenation)
-   # catalog["yearartist"]=mp.newMap(10,
-   #                                maptype="PROBING",
-   #                                loadfactor=0.5,
-   #                                comparefunction=compareyearartist)                                
-    
-
+                                 
 #Req 1
     catalog ['YearArtist']=mp.newMap(21191,
                                 maptype="PROBING",
                                 loadfactor=0.8,
                                 comparefunction=compararAño)
+
+#Req 2
+    catalog ['yearartworks']=mp.newMap(67760,
+                                maptype="PROBING",
+                                loadfactor=0.98,
+                                comparefunction=compareyearreq2)
+                      
+#Req 3
+    catalog["Nameartist"]=mp.newMap(15166,
+                                    maptype="CHAINING",
+                                    loadfactor=1,
+                                    comparefunction=comparename)
     return catalog
 
 
@@ -122,7 +129,25 @@ def comparenation (keynation, nationality):
   else:
     return -1
 
+def compareyearreq2 (keyyear, year):
+  yearentry=me.getKey(year)
+  if (keyyear==yearentry):
+    return 0
+  elif (keyyear>yearentry):
+    return 1
+  else:
+    return -1 
 
+def comparename (keyname, name):
+  nameentry=me.getKey(name)
+  if (keyname==nameentry):
+    return 0
+  elif (keyname>nameentry):
+    return 1
+  else:
+    return -1
+
+#lab 5
 def addMedium(catalog, artwork):
   try:
         mediums = catalog['Medium']
@@ -166,24 +191,6 @@ def ancient (catalog, nartworks, medium):
   answer= lt.subList(organize,1,nartworks)
   return answer
 
-            
-def addMedium2 (tablemedium, medium,artworklist):
-  try:
-    #si el medio no esta en el indice
-    if mp.contains (tablemedium, medium)==False and medium == artworklist["Medium"]:
-      #agregar una nueva medio al indice
-        mp.put(tablemedium,medium,artworklist)
-    elif mp. contains(tablemedium,medium)==True and medium == artworklist["Medium"]:
-      #saco los datos del medio
-      temp=mp.get(tablemedium,medium)
-      temp=me.getValue(temp)
-      #agrego las nuevas obras a las ya existentes
-      for artwork in lt.iterator(temp):
-        lt.addLast(artworklist, artwork)
-      #actualizar el índice de medios
-      mp.put (tablemedium,medium,artworklist)
-  except Exception as e:
-        raise e
 
 
 def addNationality (tablenationality, nationality, artworklist):
@@ -211,9 +218,6 @@ def addNationality (tablenationality, nationality, artworklist):
   except Exception as e:
         raise e
 
-    
-
-
 def artwinnation (catalog, country):
   catanation=catalog["Nationality"]
   #print(mp.size(catanation))
@@ -223,13 +227,54 @@ def artwinnation (catalog, country):
   #print(type(conjnation))
   return conjnation
 
+#agregar datos al indice de req 2
+def adddatereq2 (tabledate, dateacquired, artworklist):
+  try:
+    #si le fecha no esta en el indice
+    if dateacquired != "" and mp.contains(tabledate, dateacquired)==False:
+      #agregar nueva fecha al indice
+      mp.put (tabledate, dateacquired, artworklist)
+    #si la nacionalidad ya esta en el índice
+    elif  mp.contains(tabledate, dateacquired)==True:
+      #saco los datos de la fecha
+      temp=mp.get(tabledate, dateacquired)
+      tempo=me.getValue(temp)
+      print (lt.size(tempo)) 
+      print(tempo)
+      #Agrego las nuevas obras a las ya existentes
+      for artwork in lt.iterator(tempo):
+        lt.addLast (artworklist, artwork)
+        #actualizar el indice de yearartworks
+      mp.put(tabledate, dateacquired, artworklist)
+  except Exception as e:
+        raise e
 
-def compareyear(date1, date2):
-   if date1["BeginDate"]!= "" and date2["BeginDate"]!= "":
-        year1= int((date1["BeginDate"]))
-        year2= int((date2["BeginDate"]))
-        return year1<year2 
 
+#def compareyear(date1, date2):
+#   if date1["BeginDate"]!= "" and date2["BeginDate"]!= "":
+#        year1= int((date1["BeginDate"]))
+#        year2= int((date2["BeginDate"]))
+#        return year1<year2 
+
+#agregar datos al indice del req3
+def addnames(tablename, name, artworklist):
+  try:
+    #si el nombre no esta en el indice
+    if name != "" and mp.contains(tablename, name)==False: 
+      #agregar nuevo nombre al indice
+      mp.put(tablename, name, artworklist)
+    #si el nombre ya esta en el indice
+    elif mp.contains (tablename,name)==True:
+      #saco los datos del nombre
+      temp=mp.get(tablename, name)
+      temp=me.getValue(temp)
+      #agrego las nuevas obras a las ya existentes
+      for artwork in lt.iterator(temp):
+        lt.addLast(artworklist, artwork)
+        #actualizar el indice de Nameartist
+      mp.put(tablename, name, artworklist)
+  except Exception as e:
+        raise e
 
 # Funciones para agregar informacion al catalogo
 def addartist(catalog, artists):
@@ -339,30 +384,27 @@ def cmpArtworkByBeginDate (date1, date2):
 
 #REQ. 2: listar cronológicamente las adquisiciones 
 def addartworkyear(catalog, date1,date2):
-    date1=dt.date.fromisoformat(date1)
-    date2=dt.date.fromisoformat(date2)
-    artworksinrange=lt.newList("ARRAY_LIST")
-    i=1
-    while i<= lt.size(catalog["Artwork"]):
-        artwork=lt.getElement(catalog["Artwork"],i)
-        if artwork["DateAcquired"]!="":
-           indate=dt.date.fromisoformat(artwork["DateAcquired"])
-           if indate>= date1 and indate<= date2:
-               lt.addLast(artworksinrange, artwork)
-        i+=1
-    sortlist=sortdate(artworksinrange)
-    return sortlist
+  date1=dt.date.fromisoformat(date1)
+  date2=dt.date.fromisoformat(date2)
+  artworksinrange=lt.newList("ARRAY_LIST")
+  yearcatalog=catalog["yearartworks"]
+  while date1 <= date2:
+    date= dt (date1)
+    date1=str(date1)
+    temp= mp.get(yearcatalog, date1)
+    temp=me.getValue(temp)
+    lt.addLast(artworksinrange,temp)
+    date +=dt.timedelta(days=1)
+  sortlist=sortdate(artworksinrange)
+  return sortlist
 
   #encontrar número de obras compradas
 def purchaseart (sortedlist2):
-    i=1
-    n=0
-    while i<=lt.size(sortedlist2):
-        artwork=lt.getElement(sortedlist2,i)
-        if artwork["CreditLine"]=="Purchase":
-            n+=1
-        i+=1
-    return n
+  n=0
+  for artwork in sortedlist2:
+    if artwork["CreditLine"]=="Purchase":
+      n+=1
+  return n
     
   # Funciones de ordenamiento
 def sortdate (artworksinrange):
@@ -380,18 +422,15 @@ def cmpArtworkByDateAcquired (artwork1, artwork2):
 #REQ. 3: clasificar las obras de un artista por técnica (Individual)
 # Total de obras
 def totalartworksartist (catalog, name):
-    artworks=lt.newList("ARRAY_LIST")
-    for artist in lt.iterator(catalog["Artist"]):
-        if artist["DisplayName"]== name:
-            artworks=artist["Artworks"]
-    return artworks
+    catalogname= catalog["Nameartist"]
+    artistindex= mp.get(catalogname,name)
+    artworksartist= me.getValue (artistindex)
+    return artworksartist
 
 #Total técnicas (medios) utilizados
-def totalmediums(artworks):
+def totalmediums(artworksartist):
     techniques=lt.newList("ARRAY_LIST", cmpfunction=cmpmediums)
-    j=1
-    while j <=lt.size(artworks):
-      artwork=lt.getElement(artworks,j)
+    for artwork in lt.iterator(artworksartist):
       technique=artwork["Medium"]
       position=lt.isPresent(techniques,technique)
       if position>0:
@@ -400,7 +439,6 @@ def totalmediums(artworks):
       else:
           tec={"Name":technique,"value":1}
           lt.addLast(techniques, tec)
-      j+=1
     sortedlist=sorttecnicas(techniques)
     return sortedlist
 
