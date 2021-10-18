@@ -58,8 +58,6 @@ def loadartworks(catalog):
         model.addartwork(catalog,artwork)
 
 def load_tables(catalog):
-
-
     #Cargando lista de artistas e indice de nacionalidades de obras
     for artist in lt.iterator(catalog["Artist"]):
         #model.addartist(catalog,artist)
@@ -69,6 +67,18 @@ def load_tables(catalog):
         #print(lt.size(artworklist))
         model.addNationality(tablenationality, nationality, artworklist)
 
+    #Cargando lista de obras req2  
+    for artwork in lt.iterator (catalog["Artwork"]):
+        dateacquired=artwork["DateAcquired"]
+        tabledate= catalog["yearartworks"]
+        model.adddatereq2(tabledate, dateacquired, artwork)
+    
+    #cargando losta de obras req3
+    for artist in lt.iterator(catalog["Artist"]):
+        name=artist["DisplayName"]
+        tablename=catalog["Nameartist"]
+        artworklist=artist["Artworks"]
+        model.addnames(tablename, name, artworklist)
 
 # Funciones de ordenamiento
 # REQ. 1: listar cronológicamente los artistas 
