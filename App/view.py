@@ -210,7 +210,7 @@ while True:
                  ". Dimensiones: " +artwork["Dimensions"]+ 
                  ". Costo asociado al transporte: "+str(artwork["Price"]))
             print("El/los artista(s) de la obra son: ")
-            for artist in lt.iterator(obra["Artists"]):
+            for artist in lt.iterator(artwork["Artists"]):
                 print(artist["DisplayName"])
        listexpensive=controller.expensive(listexpensive1)
        fiveexpensive=(lt.getElement(listexpensive,1), lt.getElement(listexpensive,2),lt.getElement(listexpensive,3), lt.getElement(listexpensive,4), lt.getElement(listexpensive,5))
@@ -229,31 +229,6 @@ while True:
        delta_time = (stop_time - start_time)*10000
        print(delta_time)
 
-#Lab 5
-    elif int(inputs[0]) == 6:
-        nArtworks= int(input("Ingrese el número de obras a buscar: "))
-        medium= input("Ingrese el medio de las obras: ")
-        start_time = time.perf_counter()
-        result= controller.nArtworks(catalog, nArtworks, medium)
-        print( "las obras "+ str(nArtworks)+ " más antiguas son: ")
-        for artwork in lt.iterator(result):
-          print (artwork ["Title"])
-        stop_time = time.perf_counter()
-        delta_time = (stop_time - start_time)*10000
-        print(delta_time)
-    
-
-#Lab 6
-    elif int(inputs[0])==7:
-        country= input("Ingrese la nacionalidad de la que desea saber el número de obras: ")
-        start_time = time.perf_counter()
-        artworksnati=controller.artwinnation(catalog, country)
-        #print(artworksnati)
-        print("El número de obras de la nacionalidad "+country+" es: "+str(lt.size(artworksnati)))
-        stop_time = time.perf_counter()
-        delta_time = (stop_time - start_time)*10000
-        print(delta_time)
-   
     else:
         sys.exit(0)
 
