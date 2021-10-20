@@ -44,8 +44,6 @@ def printMenu():
     print("3- Clasificar obras de un artista por técnica")
     print("4- Clasificar las obras por nacionalidad de sus creadores")
     print("5- Transportar obras de un departamento")
-    print("6- Mostrar n obras más antiguas")
-    print("7- Numero de obras de una nacionalidad")
 
 
 def inicializar_catalogo():

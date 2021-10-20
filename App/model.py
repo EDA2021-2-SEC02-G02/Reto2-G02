@@ -25,7 +25,7 @@
  """
 
 
-from controller import nArtworks
+
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
@@ -270,8 +270,6 @@ def adddepto (tabledepto, depto, artwork):
 # Funciones para creacion de datos  
 # REQ. 1: listar cronológicamente los artistas
 
-
-
 def getArtistByRange(catalog, initialDate,finalDate):
     """
     Retorna artistas en un rango de años
@@ -358,7 +356,6 @@ def totalartworksartist (catalog, name):
     catalogname= catalog["Nameartist"]
     artistindex= mp.get(catalogname,name)
     artworksartist= me.getValue (artistindex)
-    #print(lt.size(artworksartist))
     return artworksartist
 
 #Total técnicas (medios) utilizados

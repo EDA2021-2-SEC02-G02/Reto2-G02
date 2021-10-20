@@ -58,12 +58,6 @@ def loadartworks(catalog):
         model.addartwork(catalog,artwork)
 
 def load_tables(catalog):
-    #Cargando lista de artistas e indice de nacionalidades de obras
-    for artist in lt.iterator(catalog["Artist"]):
-        nationality=artist["Nationality"]
-        tablenationality=catalog["Nationality"]
-        artworklist=artist["Artworks"]
-        model.addNationality(tablenationality, nationality, artworklist)
 
     #Cargando lista de obras req2  
     for artwork in lt.iterator (catalog["Artwork"]):
