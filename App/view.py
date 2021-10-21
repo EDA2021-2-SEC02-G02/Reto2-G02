@@ -172,35 +172,26 @@ while True:
 
         print("TOP 10 NACIONALIDADES EN EL MOMA:")
         
+        
         if lt.size(result) >= 10:
-            for i in range(0,11):
+            for i in range(1,11):
                 a=lt.getElement(result,i)
                 print(a["nacionalidad"],lt.size(a["obras"]))
         else: 
             for i in range(1,lt.size(result)+1):
                 a=lt.getElement(result,i)
                 print(a["nacionalidad"],lt.size(a["obras"]))
-        
-        #primero
-        #for i in range(1,lt.size(result)+1):
-           # a=lt.getElement(result,i)
-            #print(lt.firstElement(a["obras"]))
-
-
-        #ultimo
-        #for i in range(1,lt.size(result)+1):
-            #a=lt.getElement(result,i)
-            #print(lt.lastElement(a["obras"]))
 
         #ultimos 3
-        #for i in range(lt.size(result)-2,lt.size(result)):
-           # a=lt.getElement(result,i)
-           # print(lt.getElement(a["obras"],i))
+        mayorNacionalidad=lt.firstElement(result)
+        for i in range(lt.size(mayorNacionalidad["obras"])-2,lt.size(mayorNacionalidad["obras"])+1):
+            a=lt.getElement(mayorNacionalidad["obras"],i)
+            print(a["Title"])
         
         #primeros 3
-        #for  i in range(lt.size(result)-10,lt.size(result)-7):
-           # a=lt.getElement(result,i)
-            #print(lt.getElement(a["obras"],i))
+        for  i in range(1,4):
+            a=lt.getElement(mayorNacionalidad["obras"],i)
+            print(a["Title"])
 
         stop_time = time.perf_counter()
         delta_time = (stop_time - start_time)*10000

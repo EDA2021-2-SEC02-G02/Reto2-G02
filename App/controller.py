@@ -46,13 +46,13 @@ def loaddata(catalog):
         raise e
 
 def loadartists(catalog):
-    artistfile=cf.data_dir+"Artists-utf8-10pct.csv"
+    artistfile=cf.data_dir+"Artists-utf8-small.csv"
     input_file=csv.DictReader(open(artistfile,encoding="utf-8"))
     for artist in input_file:
         model.addartist(catalog,artist)
 
 def loadartworks(catalog):
-    artworksfile=cf.data_dir+"Artworks-utf8-10pct.csv"
+    artworksfile=cf.data_dir+"Artworks-utf8-small.csv"
     input_file=csv.DictReader(open(artworksfile,encoding="utf-8"))
     for artwork in input_file:
         model.addartwork(catalog,artwork) 
@@ -71,6 +71,14 @@ def load_tables(catalog):
         tablename=catalog["Nameartist"]
         artworklist=artist["Artworks"]
         model.addnames(tablename, name, artworklist)
+
+    for artist in lt.iterator(catalog["Artist"]):
+        #model.addartist(catalog,artist)
+        nationality=artist["Nationality"]
+        tablenationality=catalog["Nationality"]
+        artworklist=artist["Artworks"]
+        #print(lt.size(artworklist))
+        model.addNationality(tablenationality, nationality, artworklist)
 
     #cargando lista de obras req5
     for artwork in lt.iterator(catalog["Artwork"]):

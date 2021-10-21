@@ -453,6 +453,7 @@ def totalObras(catalog, nationality):
 def clasifyByNationality(catalog):
   obras=lt.newList("ARRAY_LIST")
   keys= mp.keySet(catalog ["Nationality"])
+  
   for nacionalidad in lt.iterator(keys):
     lista=totalObras(catalog, nacionalidad)
     lt.addLast(obras, f(nacionalidad,lista))
@@ -467,7 +468,7 @@ def f(nacionalidad,lista):
   return {"nacionalidad":nacionalidad,"obras":lista}
 
 def comparacionObras(obra1, obra2):
-  return lt.size(obra1["obras"])<= lt.size(obra2["obras"])
+  return lt.size(obra1["obras"])>= lt.size(obra2["obras"])
     
 
 #REQ. 5: transportar obras de un departamento
