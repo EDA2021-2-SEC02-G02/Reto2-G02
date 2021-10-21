@@ -205,6 +205,7 @@ def addartwork(catalog, artworks):
 
 def addNationality (tablenationality, nationality, artworklist):
   try:
+
     #si la nacionalidad no esta en el indice
     #print (mp.keySet(tablenationality))
     if mp.contains(tablenationality, nationality)== False:

@@ -182,16 +182,29 @@ while True:
                 a=lt.getElement(result,i)
                 print(a["nacionalidad"],lt.size(a["obras"]))
 
-        #ultimos 3
-        mayorNacionalidad=lt.firstElement(result)
-        for i in range(lt.size(mayorNacionalidad["obras"])-2,lt.size(mayorNacionalidad["obras"])+1):
-            a=lt.getElement(mayorNacionalidad["obras"],i)
-            print(a["Title"])
-        
+
+        print("PRIMEROS 3")
         #primeros 3
+        mayorNacionalidad=lt.firstElement(result)
         for  i in range(1,4):
             a=lt.getElement(mayorNacionalidad["obras"],i)
-            print(a["Title"])
+            print("\nTITULO DE LA OBRA:",a["Title"])
+            print("\nFECHA DE LA OBRA:",a["Date"])
+            print("\nMEDIO DE LA OBRA:",a["Medium"])
+            print("DIMENSIONES DE LA OBRA:",a["Dimensions"])
+            print("\n")
+
+        print("ULTIMOS 3")
+        #ultimos 3
+        for i in range(lt.size(mayorNacionalidad["obras"])-2,lt.size(mayorNacionalidad["obras"])+1):
+            a=lt.getElement(mayorNacionalidad["obras"],i)
+            print("\nTITULO DE LA OBRA:",a["Title"])
+            print("\nFECHA DE LA OBRA:",a["Date"])
+            print("\nMEDIO DE LA OBRA:",a["Medium"])
+            print("\nDIMENSIONES DE LA OBRA:",a["Dimensions"])
+            print("\n")
+
+        
 
         stop_time = time.perf_counter()
         delta_time = (stop_time - start_time)*10000
