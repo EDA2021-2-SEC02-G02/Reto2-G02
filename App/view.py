@@ -167,22 +167,44 @@ while True:
 
 
     elif int(inputs[0])== 4:
-        result= controller.artworksNationality(catalog)
+        result= controller.clasifyByNationality(catalog)
         start_time = time.perf_counter()
-        ten= result[0]
-        best= result[1]
+
         print("TOP 10 NACIONALIDADES EN EL MOMA:")
         
-        for i in ten:
-            print(i)
+        if lt.size(result) >= 10:
+            for i in range(0,11):
+                a=lt.getElement(result,i)
+                print(a["nacionalidad"],lt.size(a["obras"]))
+        else: 
+            for i in range(1,lt.size(result)+1):
+                a=lt.getElement(result,i)
+                print(a["nacionalidad"],lt.size(a["obras"]))
         
-        print("\nEL TOP 10 SON:"+ str(ten[0][0])+"incluye: "+str(ten[0][1])+"obras")
-        print("\nPRIMEROS Y UTLIMOS TRES:"+str(ten[0][0]))
+        #primero
+        #for i in range(1,lt.size(result)+1):
+           # a=lt.getElement(result,i)
+            #print(lt.firstElement(a["obras"]))
+
+
+        #ultimo
+        #for i in range(1,lt.size(result)+1):
+            #a=lt.getElement(result,i)
+            #print(lt.lastElement(a["obras"]))
+
+        #ultimos 3
+        #for i in range(lt.size(result)-2,lt.size(result)):
+           # a=lt.getElement(result,i)
+           # print(lt.getElement(a["obras"],i))
+        
+        #primeros 3
+        #for  i in range(lt.size(result)-10,lt.size(result)-7):
+           # a=lt.getElement(result,i)
+            #print(lt.getElement(a["obras"],i))
+
         stop_time = time.perf_counter()
         delta_time = (stop_time - start_time)*10000
         print(delta_time)
-        
-
 
     elif int(inputs[0])== 5:
        depto=input("Ingrese el departamento del museo que desea transportar: ")

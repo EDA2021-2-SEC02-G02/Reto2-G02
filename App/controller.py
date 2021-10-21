@@ -46,16 +46,16 @@ def loaddata(catalog):
         raise e
 
 def loadartists(catalog):
-    artistfile=cf.data_dir+"Artists-utf8-small.csv"
+    artistfile=cf.data_dir+"Artists-utf8-10pct.csv"
     input_file=csv.DictReader(open(artistfile,encoding="utf-8"))
     for artist in input_file:
         model.addartist(catalog,artist)
 
 def loadartworks(catalog):
-    artworksfile=cf.data_dir+"Artworks-utf8-small.csv"
+    artworksfile=cf.data_dir+"Artworks-utf8-10pct.csv"
     input_file=csv.DictReader(open(artworksfile,encoding="utf-8"))
     for artwork in input_file:
-        model.addartwork(catalog,artwork)
+        model.addartwork(catalog,artwork) 
 
 def load_tables(catalog):
 
@@ -109,8 +109,8 @@ def artworkstechnique1(name, artworks):
 
 
 # REQ. 4: clasificar las obras por la nacionalidad de sus creadores
-def artworksNationality(catalog):
-    return model.tenNationalities(catalog)
+def clasifyByNationality(catalog):
+    return model.clasifyByNationality(catalog)
 
 
 #REQ. 5: transportar obras de un departamento

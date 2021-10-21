@@ -61,7 +61,13 @@ def newCatalog():
                                 maptype="PROBING",
                                 loadfactor=0.98,
                                 comparefunction=compareyearreq2)
-                      
+
+#Req 4
+    catalog ["Nationality"]=mp.newMap(119,
+                                    maptype="PROBING",
+                                    loadfactor=0.8,
+                                    comparefunction=comparenation)
+
 #Req 3
     catalog["Nameartist"]=mp.newMap(15166,
                                     maptype="CHAINING",
@@ -85,6 +91,15 @@ def compareconstituentID(artist1ID, artist2ID):
         return 1
   else:
         return -1
+
+def comparenation (keynation, nationality):
+  nationalityentry= me.getKey(nationality)
+  if (keynation== nationalityentry):
+    return 0
+  elif (keynation>nationalityentry):
+    return 1
+  else:
+    return -1
 
 def compareobjectID (artwork1ID, artwork2ID):
   artwork1ID=int(artwork1ID["ObjectID"])
@@ -187,6 +202,31 @@ def addartwork(catalog, artworks):
         IDartist= eval(artwork["ConstituentID"])
         for artist in IDartist:
             addArtworkartist(catalog, artist, artwork)
+
+def addNationality (tablenationality, nationality, artworklist):
+  try:
+    #si la nacionalidad no esta en el indice
+    #print (mp.keySet(tablenationality))
+    if mp.contains(tablenationality, nationality)== False:
+      #agregar una nueva nacionalidad al indice
+      mp.put(tablenationality, nationality, artworklist)
+      #print(lt.size(artworklist))
+
+    #si la nacionalidad ya esta en el indice
+    elif mp.contains(tablenationality, nationality)== True:
+      #Saco los datos de la nacionalidad
+      temp=mp.get(tablenationality, nationality)
+      temp=me.getValue(temp)
+      #Agrego las nuevas obras a las ya existentes
+      for artwork in lt.iterator(temp):
+        lt.addLast(artworklist,artwork)
+        #print(artwork)
+      #Actualizar indice de nacionalidades
+      mp.put(tablenationality,nationality,artworklist)
+      #print(lt.size(artworklist))
+
+  except Exception as e:
+        raise e
 
       
 def addArtworkartist(catalog, IDartist, artwork):
@@ -405,50 +445,30 @@ def artworkstechnique1(name,artworks):
 
 #REQ. 4:clasificar las obras por la nacionalidad de sus creadores
 
-def take (n, iterable):
-  return list(islice(iterable,n))
+def totalObras(catalog, nationality):
+  nationalityIndex= mp.get(catalog ["Nationality"], nationality)
+  artworksNationality= me.getValue(nationalityIndex)
+  return artworksNationality 
 
-def recurrentartworks (catalog , top):
-  id = catalog["Artist"]
-  list= lt.newList(datastructure= "ARRAY_LIST")
+def clasifyByNationality(catalog):
+  obras=lt.newList("ARRAY_LIST")
+  keys= mp.keySet(catalog ["Nationality"])
+  for nacionalidad in lt.iterator(keys):
+    lista=totalObras(catalog, nacionalidad)
+    lt.addLast(obras, f(nacionalidad,lista))
+  sortedlist=sortObras(obras)
+  return sortedlist
 
-  for artist in id.values():
-    nationality = artist["Nationality"]
-    if nationality == top:
-      for artwork in lt.iterator(artist["Artworks"]):
-        lt.addLast(list, artwork)
-  return list
+def sortObras(obras):
+   sortedlist=mg.sort(obras, comparacionObras)
+   return sortedlist
 
-def tenNationalities (catalog):
-  dictionary = {}
-  identification = catalog["Artist"]
+def f(nacionalidad,lista):
+  return {"nacionalidad":nacionalidad,"obras":lista}
 
-  for artist in identification.values():
-    size= lt.size(artist["Artworks"])
-    nationality= artist["Nationality"]
-
-    if nationality != "" or nationality != "Nationality unknown":
-      if nationality not in dictionary.keys():
-        dictionary["Nationality"]= size
-      else:
-        dictionary["Nationality"]+= size
-
-  organized= dict(sorted(dictionary.items(),key=lambda item:item[1], reverse= True))
-
-  nationalities= take(100, organized.items())
-  first= nationalities[0][0]
-  list= recurrentartworks(catalog, first)
+def comparacionObras(obra1, obra2):
+  return lt.size(obra1["obras"])<= lt.size(obra2["obras"])
     
-  return nationalities, list
-
-def artworkstechnique (name,artworks):
-  listartworks=lt.newList("ARRAY_LIST")
-  for artwork in lt.iterator(artworks):
-    if artwork["Medium"]==name:
-      lt.addLast(listartworks,artwork)
-  return listartworks
-  
-
 
 #REQ. 5: transportar obras de un departamento
 #Total de obras para transportar (size de esto)
